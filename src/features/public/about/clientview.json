@@ -1,0 +1,45 @@
+[
+    {
+      "id": 1,
+      "name": "Aarti Kumthekar",
+      "testimonial": "I bought a gold mangalsutra from Wellary and it's absolutely gorgeous. Traditional yet modern—perfect for daily wear.",
+      "rating": 5,
+      "image": "https://randomuser.me/api/portraits/women/68.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Rajesh Verma",
+      "testimonial": "The kundan necklace set I gifted my wife on our anniversary was breathtaking. Excellent quality and timely delivery.",
+      "rating": 5,
+      "image": "https://randomuser.me/api/portraits/men/65.jpg"
+    },
+    {
+      "id": 3,
+      "name": "Neha Shah",
+      "testimonial": "Loved the oxidized silver jhumkas I ordered. The detailing is stunning and I received so many compliments!",
+      "rating": 4,
+      "image": "https://randomuser.me/api/portraits/women/81.jpg"
+    },
+    {
+      "id": 4,
+      "name": "Aman Khurana",
+      "testimonial": "Purchased a gold ring for my sister’s engagement. It was elegant and came in premium packaging.",
+      "rating": 4,
+      "image": "https://randomuser.me/api/portraits/men/47.jpg"
+    },
+    {
+      "id": 5,
+      "name": "Priya Nair",
+      "testimonial": "The pearl choker I ordered added the perfect touch to my saree look. Absolutely in love with the design.",
+      "rating": 5,
+      "image": "https://randomuser.me/api/portraits/women/44.jpg"
+    },
+    {
+      "id": 6,
+      "name": "Karan Mehta",
+      "testimonial": "I was impressed by the antique finish kada I received. Great value and beautiful craftsmanship.",
+      "rating": 4,
+      "image": "https://randomuser.me/api/portraits/men/59.jpg"
+    }
+  ]
+  

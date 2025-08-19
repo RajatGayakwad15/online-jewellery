@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /
+
+# Prevent Google from indexing
+User-agent: Googlebot
+Disallow: /
+
+# Prevent Bingbot
+User-agent: Bingbot
+Disallow: /
+
+# Optional: block all sitemaps
+Sitemap: none
