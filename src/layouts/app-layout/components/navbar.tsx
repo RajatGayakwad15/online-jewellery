@@ -10,7 +10,7 @@ import {
 import {
   Sheet,
   SheetContent,
-  // SheetHeader,
+  
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
@@ -66,7 +66,7 @@ export const Navbar = () => {
                     Glossary
                   </Link>
                 </SheetTitle>
-                {/* <SheetHeader /> */}
+  
                 <nav className='mt-4 flex flex-col items-start gap-3'>
                   {routeList.map(({ href, label }) => (
                     <Link
