@@ -46,23 +46,27 @@ export const Navbar = () => {
           </NavigationMenuItem>
 
           {/* Mobile */}
-          <span className='flex items-center gap-2 md:hidden'>
+           <span className='flex items-center gap-2 md:hidden'>
             <ThemeSwitch />
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger className='px-2'>
                 <Menu className='h-5 w-5' />
               </SheetTrigger>
-              <SheetContent side='left'>
-                <SheetTitle className=''>
+
+              <SheetContent
+                side='left'
+                className='h-[300px] fixed top-4 z-50 ml-4 w-[85%] max-w-xs rounded-md border border-gray-200 bg-white shadow-lg dark:border-gray-800 dark:bg-gray-900 px-4'
+              >
+                <SheetTitle>
                   <Link
                     to='/'
-                    className='ml-2 flex items-center text-xl font-bold'
+                    className='ml-2 mt-4 flex items-center text-xl font-bold'
                   >
-                    {/* <Image src={Logo} alt='logo' className='w-40 dark:invert' /> */}
+                    {/* <Image src='' alt='logo' className='w-40 dark:invert' /> */}
                     Glossary
                   </Link>
                 </SheetTitle>
-                <SheetHeader></SheetHeader>
+                {/* <SheetHeader /> */}
                 <nav className='mt-4 flex flex-col items-start gap-3'>
                   {routeList.map(({ href, label }) => (
                     <Link
