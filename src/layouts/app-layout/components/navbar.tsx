@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
+// import { Link } from '@tanstack/react-router'
 import { Menu } from 'lucide-react'
 import {  buttonVariants } from '@/components/ui/button'
 import {
@@ -10,12 +11,12 @@ import {
 import {
   Sheet,
   SheetContent,
-  
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
 // import Image from '@/components/image'
 import { ThemeSwitch } from '@/components/theme-switch'
+
 // import Logo from '/images/logo.png'
 
 interface RouteProps {
@@ -46,7 +47,7 @@ export const Navbar = () => {
           </NavigationMenuItem>
 
           {/* Mobile */}
-           <span className='flex items-center gap-2 md:hidden'>
+          <span className='flex items-center gap-2 md:hidden'>
             <ThemeSwitch />
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger className='px-2'>
@@ -55,18 +56,18 @@ export const Navbar = () => {
 
               <SheetContent
                 side='left'
-                className='h-[300px] fixed top-4 z-50 ml-4 w-[85%] max-w-xs rounded-md border border-gray-200 bg-white shadow-lg dark:border-gray-800 dark:bg-gray-900 px-4'
+                className='fixed top-4 z-50 ml-4 h-[350px] w-[85%] max-w-xs rounded-md border border-gray-200 bg-white px-4 shadow-lg dark:border-gray-800 dark:bg-gray-900'
               >
                 <SheetTitle>
                   <Link
                     to='/'
-                    className='ml-2 mt-4 flex items-center text-xl font-bold'
+                    className='mt-4 ml-2 flex items-center text-xl font-bold'
                   >
                     {/* <Image src='' alt='logo' className='w-40 dark:invert' /> */}
                     Glossary
                   </Link>
                 </SheetTitle>
-  
+
                 <nav className='mt-4 flex flex-col items-start gap-3'>
                   {routeList.map(({ href, label }) => (
                     <Link
@@ -79,6 +80,19 @@ export const Navbar = () => {
                     </Link>
                   ))}
                 </nav>
+                {/* <Button
+                  // onClick={() => setIsOpen(false)}
+                  className='mt-2 w-[35%]'
+                >
+                  Login
+                </Button> */}
+                <Link
+                  to='/admin'
+                  onClick={() => setIsOpen(false)}
+                  className={`mt-2 w-[35%] ${buttonVariants()}`}
+                >
+                  Login
+                </Link>
               </SheetContent>
             </Sheet>
           </span>
@@ -112,6 +126,9 @@ export const Navbar = () => {
               Cart
             </Button> */}
             <ThemeSwitch />
+           <Link to='/admin' onClick={() => setIsOpen(false)} className={` ${buttonVariants()}`}>
+         Login
+        </Link>
           </div>
         </NavigationMenuList>
       </NavigationMenu>
