@@ -28,11 +28,11 @@ import { Input } from '@/components/ui/input'
 // import { DataTablePagination } from './data-table-pagination'
 // import { DataTableToolbar } from './data-table-toolbar'
 
-declare module '@tanstack/react-table' {
-  interface ColumnMeta<TData extends RowData, TValue> {
-    className?: string
-  }
-}
+// declare module '@tanstack/react-table' {
+//    interface ColumnMeta<TData extends RowData, TValue> {
+//     className?: string;
+//   }
+// }
 
 interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<TData, any>[]
@@ -128,7 +128,7 @@ export function DataTable<TData extends RowData>({
                   <TableHead
                     key={header.id}
                     colSpan={header.colSpan}
-                    className={header.column.columnDef.meta?.className ?? ''}
+                    // className={header.column.columnDef.meta?.className ?? ''}
                   >
                     {header.isPlaceholder
                       ? null
@@ -152,7 +152,7 @@ export function DataTable<TData extends RowData>({
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className={cell.column.columnDef.meta?.className ?? ''}
+                      // className={cell.column.columnDef.meta?.className ?? ''}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
