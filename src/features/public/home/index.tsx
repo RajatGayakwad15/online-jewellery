@@ -19,7 +19,7 @@ const Home = () => {
       <div className='max-w-[1300px] mx-auto'>
       <Service />
       <Products />
-      <div className='mb-10 text-center'>
+      <div className='mb-10 lg:mt-10 text-center'>
         <Link to='/products' className={`px-8 ${buttonVariants()}`}>
           See All Products
         </Link>

@@ -29,7 +29,10 @@ import { Route as AdminSettingsRouteImport } from './routes/admin/settings/route
 import { Route as AdminUsersIndexImport } from './routes/admin/users/index'
 import { Route as AdminTasksIndexImport } from './routes/admin/tasks/index'
 import { Route as AdminSettingsIndexImport } from './routes/admin/settings/index'
+import { Route as AdminProductsIndexImport } from './routes/admin/products/index'
+import { Route as AdminOrderIndexImport } from './routes/admin/order/index'
 import { Route as AdminHelpCenterIndexImport } from './routes/admin/help-center/index'
+import { Route as AdminContactIndexImport } from './routes/admin/contact/index'
 import { Route as AdminChatsIndexImport } from './routes/admin/chats/index'
 import { Route as AdminAppsIndexImport } from './routes/admin/apps/index'
 import { Route as PublicTermsIndexImport } from './routes/_public/terms/index'
@@ -154,9 +157,27 @@ const AdminSettingsIndexRoute = AdminSettingsIndexImport.update({
   getParentRoute: () => AdminSettingsRouteRoute,
 } as any)
 
+const AdminProductsIndexRoute = AdminProductsIndexImport.update({
+  id: '/products/',
+  path: '/products/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+
+const AdminOrderIndexRoute = AdminOrderIndexImport.update({
+  id: '/order/',
+  path: '/order/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+
 const AdminHelpCenterIndexRoute = AdminHelpCenterIndexImport.update({
   id: '/help-center/',
   path: '/help-center/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+
+const AdminContactIndexRoute = AdminContactIndexImport.update({
+  id: '/contact/',
+  path: '/contact/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 
@@ -443,11 +464,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminChatsIndexImport
       parentRoute: typeof AdminRouteImport
     }
+    '/admin/contact/': {
+      id: '/admin/contact/'
+      path: '/contact'
+      fullPath: '/admin/contact'
+      preLoaderRoute: typeof AdminContactIndexImport
+      parentRoute: typeof AdminRouteImport
+    }
     '/admin/help-center/': {
       id: '/admin/help-center/'
       path: '/help-center'
       fullPath: '/admin/help-center'
       preLoaderRoute: typeof AdminHelpCenterIndexImport
+      parentRoute: typeof AdminRouteImport
+    }
+    '/admin/order/': {
+      id: '/admin/order/'
+      path: '/order'
+      fullPath: '/admin/order'
+      preLoaderRoute: typeof AdminOrderIndexImport
+      parentRoute: typeof AdminRouteImport
+    }
+    '/admin/products/': {
+      id: '/admin/products/'
+      path: '/products'
+      fullPath: '/admin/products'
+      preLoaderRoute: typeof AdminProductsIndexImport
       parentRoute: typeof AdminRouteImport
     }
     '/admin/settings/': {
@@ -542,7 +584,10 @@ interface AdminRouteRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   AdminAppsIndexRoute: typeof AdminAppsIndexRoute
   AdminChatsIndexRoute: typeof AdminChatsIndexRoute
+  AdminContactIndexRoute: typeof AdminContactIndexRoute
   AdminHelpCenterIndexRoute: typeof AdminHelpCenterIndexRoute
+  AdminOrderIndexRoute: typeof AdminOrderIndexRoute
+  AdminProductsIndexRoute: typeof AdminProductsIndexRoute
   AdminTasksIndexRoute: typeof AdminTasksIndexRoute
   AdminUsersIndexRoute: typeof AdminUsersIndexRoute
 }
@@ -552,7 +597,10 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   AdminAppsIndexRoute: AdminAppsIndexRoute,
   AdminChatsIndexRoute: AdminChatsIndexRoute,
+  AdminContactIndexRoute: AdminContactIndexRoute,
   AdminHelpCenterIndexRoute: AdminHelpCenterIndexRoute,
+  AdminOrderIndexRoute: AdminOrderIndexRoute,
+  AdminProductsIndexRoute: AdminProductsIndexRoute,
   AdminTasksIndexRoute: AdminTasksIndexRoute,
   AdminUsersIndexRoute: AdminUsersIndexRoute,
 }
@@ -589,7 +637,10 @@ export interface FileRoutesByFullPath {
   '/terms': typeof PublicTermsIndexRoute
   '/admin/apps': typeof AdminAppsIndexRoute
   '/admin/chats': typeof AdminChatsIndexRoute
+  '/admin/contact': typeof AdminContactIndexRoute
   '/admin/help-center': typeof AdminHelpCenterIndexRoute
+  '/admin/order': typeof AdminOrderIndexRoute
+  '/admin/products': typeof AdminProductsIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
   '/admin/tasks': typeof AdminTasksIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
@@ -622,7 +673,10 @@ export interface FileRoutesByTo {
   '/terms': typeof PublicTermsIndexRoute
   '/admin/apps': typeof AdminAppsIndexRoute
   '/admin/chats': typeof AdminChatsIndexRoute
+  '/admin/contact': typeof AdminContactIndexRoute
   '/admin/help-center': typeof AdminHelpCenterIndexRoute
+  '/admin/order': typeof AdminOrderIndexRoute
+  '/admin/products': typeof AdminProductsIndexRoute
   '/admin/settings': typeof AdminSettingsIndexRoute
   '/admin/tasks': typeof AdminTasksIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
@@ -659,7 +713,10 @@ export interface FileRoutesById {
   '/_public/terms/': typeof PublicTermsIndexRoute
   '/admin/apps/': typeof AdminAppsIndexRoute
   '/admin/chats/': typeof AdminChatsIndexRoute
+  '/admin/contact/': typeof AdminContactIndexRoute
   '/admin/help-center/': typeof AdminHelpCenterIndexRoute
+  '/admin/order/': typeof AdminOrderIndexRoute
+  '/admin/products/': typeof AdminProductsIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
   '/admin/tasks/': typeof AdminTasksIndexRoute
   '/admin/users/': typeof AdminUsersIndexRoute
@@ -697,7 +754,10 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/apps'
     | '/admin/chats'
+    | '/admin/contact'
     | '/admin/help-center'
+    | '/admin/order'
+    | '/admin/products'
     | '/admin/settings/'
     | '/admin/tasks'
     | '/admin/users'
@@ -729,7 +789,10 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/apps'
     | '/admin/chats'
+    | '/admin/contact'
     | '/admin/help-center'
+    | '/admin/order'
+    | '/admin/products'
     | '/admin/settings'
     | '/admin/tasks'
     | '/admin/users'
@@ -764,7 +827,10 @@ export interface FileRouteTypes {
     | '/_public/terms/'
     | '/admin/apps/'
     | '/admin/chats/'
+    | '/admin/contact/'
     | '/admin/help-center/'
+    | '/admin/order/'
+    | '/admin/products/'
     | '/admin/settings/'
     | '/admin/tasks/'
     | '/admin/users/'
@@ -848,7 +914,10 @@ export const routeTree = rootRoute
         "/admin/",
         "/admin/apps/",
         "/admin/chats/",
+        "/admin/contact/",
         "/admin/help-center/",
+        "/admin/order/",
+        "/admin/products/",
         "/admin/tasks/",
         "/admin/users/"
       ]
@@ -950,8 +1019,20 @@ export const routeTree = rootRoute
       "filePath": "admin/chats/index.tsx",
       "parent": "/admin"
     },
+    "/admin/contact/": {
+      "filePath": "admin/contact/index.tsx",
+      "parent": "/admin"
+    },
     "/admin/help-center/": {
       "filePath": "admin/help-center/index.tsx",
+      "parent": "/admin"
+    },
+    "/admin/order/": {
+      "filePath": "admin/order/index.tsx",
+      "parent": "/admin"
+    },
+    "/admin/products/": {
+      "filePath": "admin/products/index.tsx",
       "parent": "/admin"
     },
     "/admin/settings/": {

@@ -1,10 +1,10 @@
-import { Cross2Icon } from '@radix-ui/react-icons'
+// import { Cross2Icon } from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
-import { Button } from '@/components/ui/button'
+// import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { userTypes } from '../data/data'
-import { DataTableFacetedFilter } from './data-table-faceted-filter'
-import { DataTableViewOptions } from './data-table-view-options'
+// import { userTypes } from '../data/data'
+// import { DataTableFacetedFilter } from './data-table-faceted-filter'
+// import { DataTableViewOptions } from './data-table-view-options'
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -28,7 +28,7 @@ export function DataTableToolbar<TData>({
           }
           className='h-8 w-[150px] lg:w-[250px]'
         />
-        <div className='flex gap-x-2'>
+        {/* <div className='flex gap-x-2'>
           {table.getColumn('status') && (
             <DataTableFacetedFilter
               column={table.getColumn('status')}
@@ -48,8 +48,8 @@ export function DataTableToolbar<TData>({
               options={userTypes.map((t) => ({ ...t }))}
             />
           )}
-        </div>
-        {isFiltered && (
+        </div> */}
+        {/* {isFiltered && (
           <Button
             variant='ghost'
             onClick={() => table.resetColumnFilters()}
@@ -58,9 +58,9 @@ export function DataTableToolbar<TData>({
             Reset
             <Cross2Icon className='ml-2 h-4 w-4' />
           </Button>
-        )}
+        )} */}
       </div>
-      <DataTableViewOptions table={table} />
+      {/* <DataTableViewOptions table={table} /> */}
     </div>
   )
 }

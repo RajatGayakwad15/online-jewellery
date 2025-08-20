@@ -1,6 +1,6 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
-import { Separator } from '@/components/ui/separator'
+// import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 
 interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
@@ -39,7 +39,7 @@ export const Header = ({
       {...props}
     >
       <SidebarTrigger variant='outline' className='scale-125 sm:scale-100' />
-      <Separator orientation='vertical' className='h-6' />
+      {/* <Separator orientation='vertical' className='h-6' /> */}
       {children}
     </header>
   )
