@@ -1,13 +1,14 @@
 import {
   Card,
   CardContent,
-  CardDescription,
+  // CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
 import AuthLayout from '../auth-layout'
 import { UserAuthForm } from './components/user-auth-form'
+import { Link } from '@tanstack/react-router'
 
 export default function SignIn() {
   return (
@@ -15,32 +16,43 @@ export default function SignIn() {
       <Card className='gap-4'>
         <CardHeader>
           <CardTitle className='text-lg tracking-tight'>Login</CardTitle>
-          <CardDescription>
-            Enter your email and password below to <br />
+          {/* <CardDescription>
+            Enter your username and password below to <br />
             log into your account
-          </CardDescription>
+          </CardDescription> */}
         </CardHeader>
         <CardContent>
           <UserAuthForm />
         </CardContent>
         <CardFooter>
-          <p className='text-muted-foreground px-8 text-center text-sm'>
-            By clicking login, you agree to our{' '}
+          <div className='flex justify-between items-center w-full'>
+         
+           <Link
+                to='/forgot-password'
+                className='text-muted-foreground  text-sm font-medium hover:text-primary'
+              >
+                Forgot password?
+              </Link>
+               <p className='text-muted-foreground  text-sm'>
+            Don’t have an account? {' '}
             <a
-              href='/terms'
+              href='/register'
               className='hover:text-primary underline underline-offset-4'
             >
-              Terms of Service
+            Register
+            
             </a>{' '}
-            and{' '}
+            {/* and{' '}
             <a
               href='/privacy'
               className='hover:text-primary underline underline-offset-4'
             >
               Privacy Policy
             </a>
-            .
+            . */}
+            
           </p>
+               </div>
         </CardFooter>
       </Card>
     </AuthLayout>

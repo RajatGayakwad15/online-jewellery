@@ -2,21 +2,21 @@
 import {
   Card,
   CardContent,
-  // CardDescription,
-  CardFooter,
+//   CardDescription,
+//   CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
 import AuthLayout from '../auth-layout'
-import { SignUpForm } from './components/sign-up-form'
+import { SignUpForm } from './components/setpassword-forrm.tsx'
 
-export default function SignUp() {
+export default function Setpassword() {
   return (
     <AuthLayout>
       <Card className='gap-4'>
         <CardHeader>
           <CardTitle className='text-lg tracking-tight'>
-            Create an account
+            Set Password
           </CardTitle>
           {/* <CardDescription>
             Enter your email and password to create an account. <br />
@@ -32,7 +32,7 @@ export default function SignUp() {
         <CardContent>
           <SignUpForm />
         </CardContent>
-        <CardFooter>
+        {/* <CardFooter>
           <p className='text-muted-foreground  text-center text-sm'>
              Already have an account?{' '}
             <a
@@ -41,16 +41,9 @@ export default function SignUp() {
             >
               Login
             </a>{' '}
-            {/* and{' '}
-            <a
-              href='/privacy'
-              className='hover:text-primary underline underline-offset-4'
-            >
-              Privacy Policy
-            </a>
-            . */}
+            
           </p>
-        </CardFooter>
+        </CardFooter> */}
       </Card>
     </AuthLayout>
   )

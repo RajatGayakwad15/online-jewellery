@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router'
 import {
   Card,
   CardContent,
-  CardDescription,
+  // CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -16,12 +16,12 @@ export default function Otp() {
       <Card className='gap-4'>
         <CardHeader>
           <CardTitle className='text-base tracking-tight'>
-            Two-factor Authentication
+            Verify otp
           </CardTitle>
-          <CardDescription>
+          {/* <CardDescription>
             Please enter the authentication code. <br /> We have sent the
             authentication code to your email.
-          </CardDescription>
+          </CardDescription> */}
         </CardHeader>
         <CardContent>
           <OtpForm />

@@ -63,9 +63,9 @@ export function OtpForm({ className, ...props }: OtpFormProps) {
               <FormLabel className='sr-only'>One-Time Password</FormLabel>
               <FormControl>
                 <InputOTP
-                  maxLength={6}
+                  maxLength={4}
                   {...field}
-                  containerClassName='justify-between sm:[&>[data-slot="input-otp-group"]>div]:w-12'
+                  containerClassName='justify-center sm:[&>[data-slot="input-otp-group"]>div]:w-20'
                 >
                   <InputOTPGroup>
                     <InputOTPSlot index={0} />
@@ -76,11 +76,11 @@ export function OtpForm({ className, ...props }: OtpFormProps) {
                     <InputOTPSlot index={2} />
                     <InputOTPSlot index={3} />
                   </InputOTPGroup>
-                  <InputOTPSeparator />
-                  <InputOTPGroup>
+                  {/* <InputOTPSeparator /> */}
+                  {/* <InputOTPGroup>
                     <InputOTPSlot index={4} />
                     <InputOTPSlot index={5} />
-                  </InputOTPGroup>
+                  </InputOTPGroup> */}
                 </InputOTP>
               </FormControl>
               <FormMessage />

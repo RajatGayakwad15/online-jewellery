@@ -23,7 +23,10 @@ import { Route as errors401Import } from './routes/(errors)/401'
 import { Route as authSignUpImport } from './routes/(auth)/sign-up'
 import { Route as authSignIn2Import } from './routes/(auth)/sign-in-2'
 import { Route as authSignInImport } from './routes/(auth)/sign-in'
+import { Route as authSetpasswordImport } from './routes/(auth)/setpassword'
+import { Route as authRegisterImport } from './routes/(auth)/register'
 import { Route as authOtpImport } from './routes/(auth)/otp'
+import { Route as authLoginImport } from './routes/(auth)/login'
 import { Route as authForgotPasswordImport } from './routes/(auth)/forgot-password'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings/route'
 import { Route as AdminUsersIndexImport } from './routes/admin/users/index'
@@ -45,6 +48,8 @@ import { Route as AdminSettingsNotificationsImport } from './routes/admin/settin
 import { Route as AdminSettingsDisplayImport } from './routes/admin/settings/display'
 import { Route as AdminSettingsAppearanceImport } from './routes/admin/settings/appearance'
 import { Route as AdminSettingsAccountImport } from './routes/admin/settings/account'
+import { Route as AdminProductsUpdateIndexImport } from './routes/admin/products/update/index'
+import { Route as AdminProductsAddIndexImport } from './routes/admin/products/add/index'
 import { Route as PublicProductsCategoryIndexImport } from './routes/_public/products/$category/index'
 import { Route as PublicProductsCategoryIdIndexImport } from './routes/_public/products/$category/$id/index'
 
@@ -121,9 +126,27 @@ const authSignInRoute = authSignInImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const authSetpasswordRoute = authSetpasswordImport.update({
+  id: '/(auth)/setpassword',
+  path: '/setpassword',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const authRegisterRoute = authRegisterImport.update({
+  id: '/(auth)/register',
+  path: '/register',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const authOtpRoute = authOtpImport.update({
   id: '/(auth)/otp',
   path: '/otp',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const authLoginRoute = authLoginImport.update({
+  id: '/(auth)/login',
+  path: '/login',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -257,6 +280,18 @@ const AdminSettingsAccountRoute = AdminSettingsAccountImport.update({
   getParentRoute: () => AdminSettingsRouteRoute,
 } as any)
 
+const AdminProductsUpdateIndexRoute = AdminProductsUpdateIndexImport.update({
+  id: '/products/update/',
+  path: '/products/update/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+
+const AdminProductsAddIndexRoute = AdminProductsAddIndexImport.update({
+  id: '/products/add/',
+  path: '/products/add/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+
 const PublicProductsCategoryIndexRoute =
   PublicProductsCategoryIndexImport.update({
     id: '/products/$category/',
@@ -303,11 +338,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authForgotPasswordImport
       parentRoute: typeof rootRoute
     }
+    '/(auth)/login': {
+      id: '/(auth)/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof authLoginImport
+      parentRoute: typeof rootRoute
+    }
     '/(auth)/otp': {
       id: '/(auth)/otp'
       path: '/otp'
       fullPath: '/otp'
       preLoaderRoute: typeof authOtpImport
+      parentRoute: typeof rootRoute
+    }
+    '/(auth)/register': {
+      id: '/(auth)/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof authRegisterImport
+      parentRoute: typeof rootRoute
+    }
+    '/(auth)/setpassword': {
+      id: '/(auth)/setpassword'
+      path: '/setpassword'
+      fullPath: '/setpassword'
+      preLoaderRoute: typeof authSetpasswordImport
       parentRoute: typeof rootRoute
     }
     '/(auth)/sign-in': {
@@ -520,6 +576,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicProductsCategoryIndexImport
       parentRoute: typeof PublicRouteImport
     }
+    '/admin/products/add/': {
+      id: '/admin/products/add/'
+      path: '/products/add'
+      fullPath: '/admin/products/add'
+      preLoaderRoute: typeof AdminProductsAddIndexImport
+      parentRoute: typeof AdminRouteImport
+    }
+    '/admin/products/update/': {
+      id: '/admin/products/update/'
+      path: '/products/update'
+      fullPath: '/admin/products/update'
+      preLoaderRoute: typeof AdminProductsUpdateIndexImport
+      parentRoute: typeof AdminRouteImport
+    }
     '/_public/products/$category/$id/': {
       id: '/_public/products/$category/$id/'
       path: '/products/$category/$id'
@@ -590,6 +660,8 @@ interface AdminRouteRouteChildren {
   AdminProductsIndexRoute: typeof AdminProductsIndexRoute
   AdminTasksIndexRoute: typeof AdminTasksIndexRoute
   AdminUsersIndexRoute: typeof AdminUsersIndexRoute
+  AdminProductsAddIndexRoute: typeof AdminProductsAddIndexRoute
+  AdminProductsUpdateIndexRoute: typeof AdminProductsUpdateIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
@@ -603,6 +675,8 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminProductsIndexRoute: AdminProductsIndexRoute,
   AdminTasksIndexRoute: AdminTasksIndexRoute,
   AdminUsersIndexRoute: AdminUsersIndexRoute,
+  AdminProductsAddIndexRoute: AdminProductsAddIndexRoute,
+  AdminProductsUpdateIndexRoute: AdminProductsUpdateIndexRoute,
 }
 
 const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
@@ -614,7 +688,10 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteRouteWithChildren
   '/admin/settings': typeof AdminSettingsRouteRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
+  '/login': typeof authLoginRoute
   '/otp': typeof authOtpRoute
+  '/register': typeof authRegisterRoute
+  '/setpassword': typeof authSetpasswordRoute
   '/sign-in': typeof authSignInRoute
   '/sign-in-2': typeof authSignIn2Route
   '/sign-up': typeof authSignUpRoute
@@ -645,12 +722,17 @@ export interface FileRoutesByFullPath {
   '/admin/tasks': typeof AdminTasksIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
   '/products/$category': typeof PublicProductsCategoryIndexRoute
+  '/admin/products/add': typeof AdminProductsAddIndexRoute
+  '/admin/products/update': typeof AdminProductsUpdateIndexRoute
   '/products/$category/$id': typeof PublicProductsCategoryIdIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/forgot-password': typeof authForgotPasswordRoute
+  '/login': typeof authLoginRoute
   '/otp': typeof authOtpRoute
+  '/register': typeof authRegisterRoute
+  '/setpassword': typeof authSetpasswordRoute
   '/sign-in': typeof authSignInRoute
   '/sign-in-2': typeof authSignIn2Route
   '/sign-up': typeof authSignUpRoute
@@ -681,6 +763,8 @@ export interface FileRoutesByTo {
   '/admin/tasks': typeof AdminTasksIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
   '/products/$category': typeof PublicProductsCategoryIndexRoute
+  '/admin/products/add': typeof AdminProductsAddIndexRoute
+  '/admin/products/update': typeof AdminProductsUpdateIndexRoute
   '/products/$category/$id': typeof PublicProductsCategoryIdIndexRoute
 }
 
@@ -690,7 +774,10 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteRouteWithChildren
   '/admin/settings': typeof AdminSettingsRouteRouteWithChildren
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
+  '/(auth)/login': typeof authLoginRoute
   '/(auth)/otp': typeof authOtpRoute
+  '/(auth)/register': typeof authRegisterRoute
+  '/(auth)/setpassword': typeof authSetpasswordRoute
   '/(auth)/sign-in': typeof authSignInRoute
   '/(auth)/sign-in-2': typeof authSignIn2Route
   '/(auth)/sign-up': typeof authSignUpRoute
@@ -721,6 +808,8 @@ export interface FileRoutesById {
   '/admin/tasks/': typeof AdminTasksIndexRoute
   '/admin/users/': typeof AdminUsersIndexRoute
   '/_public/products/$category/': typeof PublicProductsCategoryIndexRoute
+  '/admin/products/add/': typeof AdminProductsAddIndexRoute
+  '/admin/products/update/': typeof AdminProductsUpdateIndexRoute
   '/_public/products/$category/$id/': typeof PublicProductsCategoryIdIndexRoute
 }
 
@@ -731,7 +820,10 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/settings'
     | '/forgot-password'
+    | '/login'
     | '/otp'
+    | '/register'
+    | '/setpassword'
     | '/sign-in'
     | '/sign-in-2'
     | '/sign-up'
@@ -762,11 +854,16 @@ export interface FileRouteTypes {
     | '/admin/tasks'
     | '/admin/users'
     | '/products/$category'
+    | '/admin/products/add'
+    | '/admin/products/update'
     | '/products/$category/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forgot-password'
+    | '/login'
     | '/otp'
+    | '/register'
+    | '/setpassword'
     | '/sign-in'
     | '/sign-in-2'
     | '/sign-up'
@@ -797,6 +894,8 @@ export interface FileRouteTypes {
     | '/admin/tasks'
     | '/admin/users'
     | '/products/$category'
+    | '/admin/products/add'
+    | '/admin/products/update'
     | '/products/$category/$id'
   id:
     | '__root__'
@@ -804,7 +903,10 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/settings'
     | '/(auth)/forgot-password'
+    | '/(auth)/login'
     | '/(auth)/otp'
+    | '/(auth)/register'
+    | '/(auth)/setpassword'
     | '/(auth)/sign-in'
     | '/(auth)/sign-in-2'
     | '/(auth)/sign-up'
@@ -835,6 +937,8 @@ export interface FileRouteTypes {
     | '/admin/tasks/'
     | '/admin/users/'
     | '/_public/products/$category/'
+    | '/admin/products/add/'
+    | '/admin/products/update/'
     | '/_public/products/$category/$id/'
   fileRoutesById: FileRoutesById
 }
@@ -843,7 +947,10 @@ export interface RootRouteChildren {
   PublicRouteRoute: typeof PublicRouteRouteWithChildren
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   authForgotPasswordRoute: typeof authForgotPasswordRoute
+  authLoginRoute: typeof authLoginRoute
   authOtpRoute: typeof authOtpRoute
+  authRegisterRoute: typeof authRegisterRoute
+  authSetpasswordRoute: typeof authSetpasswordRoute
   authSignInRoute: typeof authSignInRoute
   authSignIn2Route: typeof authSignIn2Route
   authSignUpRoute: typeof authSignUpRoute
@@ -858,7 +965,10 @@ const rootRouteChildren: RootRouteChildren = {
   PublicRouteRoute: PublicRouteRouteWithChildren,
   AdminRouteRoute: AdminRouteRouteWithChildren,
   authForgotPasswordRoute: authForgotPasswordRoute,
+  authLoginRoute: authLoginRoute,
   authOtpRoute: authOtpRoute,
+  authRegisterRoute: authRegisterRoute,
+  authSetpasswordRoute: authSetpasswordRoute,
   authSignInRoute: authSignInRoute,
   authSignIn2Route: authSignIn2Route,
   authSignUpRoute: authSignUpRoute,
@@ -882,7 +992,10 @@ export const routeTree = rootRoute
         "/_public",
         "/admin",
         "/(auth)/forgot-password",
+        "/(auth)/login",
         "/(auth)/otp",
+        "/(auth)/register",
+        "/(auth)/setpassword",
         "/(auth)/sign-in",
         "/(auth)/sign-in-2",
         "/(auth)/sign-up",
@@ -919,7 +1032,9 @@ export const routeTree = rootRoute
         "/admin/order/",
         "/admin/products/",
         "/admin/tasks/",
-        "/admin/users/"
+        "/admin/users/",
+        "/admin/products/add/",
+        "/admin/products/update/"
       ]
     },
     "/admin/settings": {
@@ -936,8 +1051,17 @@ export const routeTree = rootRoute
     "/(auth)/forgot-password": {
       "filePath": "(auth)/forgot-password.tsx"
     },
+    "/(auth)/login": {
+      "filePath": "(auth)/login.tsx"
+    },
     "/(auth)/otp": {
       "filePath": "(auth)/otp.tsx"
+    },
+    "/(auth)/register": {
+      "filePath": "(auth)/register.tsx"
+    },
+    "/(auth)/setpassword": {
+      "filePath": "(auth)/setpassword.tsx"
     },
     "/(auth)/sign-in": {
       "filePath": "(auth)/sign-in.tsx"
@@ -1050,6 +1174,14 @@ export const routeTree = rootRoute
     "/_public/products/$category/": {
       "filePath": "_public/products/$category/index.tsx",
       "parent": "/_public"
+    },
+    "/admin/products/add/": {
+      "filePath": "admin/products/add/index.tsx",
+      "parent": "/admin"
+    },
+    "/admin/products/update/": {
+      "filePath": "admin/products/update/index.tsx",
+      "parent": "/admin"
     },
     "/_public/products/$category/$id/": {
       "filePath": "_public/products/$category/$id/index.tsx",

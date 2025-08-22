@@ -1,13 +1,14 @@
 // import React from 'react'
+import { Link } from '@tanstack/react-router'
+// import { UsersPrimaryButtons } from '@/features/users/components/users-primary-buttons'
+// import { IconPlus } from '@tabler/icons-react'
+import {  buttonVariants } from '@/components/ui/button'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 // import { TopNav } from '@/components/layout/top-nav'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 // import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-// import { UsersPrimaryButtons } from '@/features/users/components/users-primary-buttons'
-// import { IconPlus } from '@tabler/icons-react'
-import { Button } from '@/components/ui/button'
 import ProductPage from '@/features/datatable/ProductPage'
 
 const products = () => {
@@ -22,22 +23,27 @@ const products = () => {
         </div>
       </Header>
       <Main>
-      <div className='mb-2 flex flex-wrap items-center justify-between space-y-2'>
-                <div>
-                  <h2 className='text-2xl font-bold tracking-tight'>Product List</h2>
-                  <p className='text-muted-foreground'>
-                    Manage your Product here.
-                  </p>
-                </div>
-                {/* <UsersPrimaryButtons /> */}
-                  <Button className='space-x-1' >
+        <div className='mb-2 flex flex-wrap items-center justify-between space-y-2'>
+          <div>
+            <h2 className='text-2xl font-bold tracking-tight'>Product List</h2>
+            <p className='text-muted-foreground'>Manage your Product here.</p>
+          </div>
+          {/* <UsersPrimaryButtons /> */}
+          {/* <Button className='space-x-1' >
         <span>Add Product</span> 
-      </Button>
-              </div>
-              <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
-                {/* <UsersTable data={userList} columns={columns} /> */}
-                <ProductPage />
-              </div>
+      </Button> */}
+          <Link
+            to='/admin/products/add'
+            // onClick={() => setIsOpen(false)}
+            className={`  ${buttonVariants()}`}
+          >
+            Add Product
+          </Link>
+        </div>
+        <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
+          {/* <UsersTable data={userList} columns={columns} /> */}
+          <ProductPage />
+        </div>
       </Main>
     </>
   )
