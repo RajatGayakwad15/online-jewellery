@@ -29,6 +29,7 @@ import { Route as authOtpImport } from './routes/(auth)/otp'
 import { Route as authLoginImport } from './routes/(auth)/login'
 import { Route as authForgotPasswordImport } from './routes/(auth)/forgot-password'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings/route'
+import { Route as AuthLoginIndexImport } from './routes/auth/login/index'
 import { Route as AdminUsersIndexImport } from './routes/admin/users/index'
 import { Route as AdminTasksIndexImport } from './routes/admin/tasks/index'
 import { Route as AdminSettingsIndexImport } from './routes/admin/settings/index'
@@ -160,6 +161,12 @@ const AdminSettingsRouteRoute = AdminSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => AdminRouteRoute,
+} as any)
+
+const AuthLoginIndexRoute = AuthLoginIndexImport.update({
+  id: '/auth/login/',
+  path: '/auth/login/',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const AdminUsersIndexRoute = AdminUsersIndexImport.update({
@@ -569,6 +576,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersIndexImport
       parentRoute: typeof AdminRouteImport
     }
+    '/auth/login/': {
+      id: '/auth/login/'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/_public/products/$category/': {
       id: '/_public/products/$category/'
       path: '/products/$category'
@@ -721,6 +735,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings/': typeof AdminSettingsIndexRoute
   '/admin/tasks': typeof AdminTasksIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
+  '/auth/login': typeof AuthLoginIndexRoute
   '/products/$category': typeof PublicProductsCategoryIndexRoute
   '/admin/products/add': typeof AdminProductsAddIndexRoute
   '/admin/products/update': typeof AdminProductsUpdateIndexRoute
@@ -762,6 +777,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AdminSettingsIndexRoute
   '/admin/tasks': typeof AdminTasksIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
+  '/auth/login': typeof AuthLoginIndexRoute
   '/products/$category': typeof PublicProductsCategoryIndexRoute
   '/admin/products/add': typeof AdminProductsAddIndexRoute
   '/admin/products/update': typeof AdminProductsUpdateIndexRoute
@@ -807,6 +823,7 @@ export interface FileRoutesById {
   '/admin/settings/': typeof AdminSettingsIndexRoute
   '/admin/tasks/': typeof AdminTasksIndexRoute
   '/admin/users/': typeof AdminUsersIndexRoute
+  '/auth/login/': typeof AuthLoginIndexRoute
   '/_public/products/$category/': typeof PublicProductsCategoryIndexRoute
   '/admin/products/add/': typeof AdminProductsAddIndexRoute
   '/admin/products/update/': typeof AdminProductsUpdateIndexRoute
@@ -853,6 +870,7 @@ export interface FileRouteTypes {
     | '/admin/settings/'
     | '/admin/tasks'
     | '/admin/users'
+    | '/auth/login'
     | '/products/$category'
     | '/admin/products/add'
     | '/admin/products/update'
@@ -893,6 +911,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/tasks'
     | '/admin/users'
+    | '/auth/login'
     | '/products/$category'
     | '/admin/products/add'
     | '/admin/products/update'
@@ -936,6 +955,7 @@ export interface FileRouteTypes {
     | '/admin/settings/'
     | '/admin/tasks/'
     | '/admin/users/'
+    | '/auth/login/'
     | '/_public/products/$category/'
     | '/admin/products/add/'
     | '/admin/products/update/'
@@ -959,6 +979,7 @@ export interface RootRouteChildren {
   errors404Route: typeof errors404Route
   errors500Route: typeof errors500Route
   errors503Route: typeof errors503Route
+  AuthLoginIndexRoute: typeof AuthLoginIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -977,6 +998,7 @@ const rootRouteChildren: RootRouteChildren = {
   errors404Route: errors404Route,
   errors500Route: errors500Route,
   errors503Route: errors503Route,
+  AuthLoginIndexRoute: AuthLoginIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -1003,7 +1025,8 @@ export const routeTree = rootRoute
         "/(errors)/403",
         "/(errors)/404",
         "/(errors)/500",
-        "/(errors)/503"
+        "/(errors)/503",
+        "/auth/login/"
       ]
     },
     "/_public": {
@@ -1170,6 +1193,9 @@ export const routeTree = rootRoute
     "/admin/users/": {
       "filePath": "admin/users/index.tsx",
       "parent": "/admin"
+    },
+    "/auth/login/": {
+      "filePath": "auth/login/index.tsx"
     },
     "/_public/products/$category/": {
       "filePath": "_public/products/$category/index.tsx",
