@@ -24,22 +24,15 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Input } from '@/components/ui/input'
+import { useNavigate } from '@tanstack/react-router'
 
-// import { DataTablePagination } from './data-table-pagination'
-// import { DataTableToolbar } from './data-table-toolbar'
-
-// declare module '@tanstack/react-table' {
-//    interface ColumnMeta<TData extends RowData, TValue> {
-//     className?: string;
-//   }
-// }
-
-interface DataTableProps<TData extends RowData> {
+// Extend RowData with id so TypeScript knows it exists
+interface DataTableProps<TData extends RowData & { id: string | number }> {
   columns: ColumnDef<TData, any>[]
   data: TData[]
 }
 
-export function DataTable<TData extends RowData>({
+export function DataTable<TData extends RowData & { id: string | number }>({
   columns,
   data,
 }: DataTableProps<TData>) {
@@ -47,6 +40,7 @@ export function DataTable<TData extends RowData>({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([])
+  const navigate = useNavigate()
 
   const table = useReactTable({
     data,
@@ -69,56 +63,24 @@ export function DataTable<TData extends RowData>({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
+  console.log('datadata', data)
 
   return (
     <div className='space-y-4'>
-      {/* <DataTableToolbar table={table} /> */}
       <div className='flex items-center justify-between'>
-      <div className='flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2'>
-        <Input
-          placeholder='Search...'
-          value={
-            (table.getColumn('username')?.getFilterValue() as string) ?? ''
-          }
-          onChange={(event) =>
-            table.getColumn('username')?.setFilterValue(event.target.value)
-          }
-          className='h-8 w-[150px] lg:w-[250px]'
-        />
-        {/* <div className='flex gap-x-2'>
-          {table.getColumn('status') && (
-            <DataTableFacetedFilter
-              column={table.getColumn('status')}
-              title='Status'
-              options={[
-                { label: 'Active', value: 'active' },
-                { label: 'Inactive', value: 'inactive' },
-                { label: 'Invited', value: 'invited' },
-                { label: 'Suspended', value: 'suspended' },
-              ]}
-            />
-          )}
-          {table.getColumn('role') && (
-            <DataTableFacetedFilter
-              column={table.getColumn('role')}
-              title='Role'
-              options={userTypes.map((t) => ({ ...t }))}
-            />
-          )}
-        </div> */}
-        {/* {isFiltered && (
-          <Button
-            variant='ghost'
-            onClick={() => table.resetColumnFilters()}
-            className='h-8 px-2 lg:px-3'
-          >
-            Reset
-            <Cross2Icon className='ml-2 h-4 w-4' />
-          </Button>
-        )} */}
+        <div className='flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2'>
+          <Input
+            placeholder='Search...'
+            value={
+              (table.getColumn('username')?.getFilterValue() as string) ?? ''
+            }
+            onChange={(event) =>
+              table.getColumn('username')?.setFilterValue(event.target.value)
+            }
+            className='h-8 w-[150px] lg:w-[250px]'
+          />
+        </div>
       </div>
-      {/* <DataTableViewOptions table={table} /> */}
-    </div>
       <div className='rounded-md border'>
         <Table>
           <TableHeader>
@@ -128,7 +90,6 @@ export function DataTable<TData extends RowData>({
                   <TableHead
                     key={header.id}
                     colSpan={header.colSpan}
-                    // className={header.column.columnDef.meta?.className ?? ''}
                   >
                     {header.isPlaceholder
                       ? null
@@ -148,12 +109,13 @@ export function DataTable<TData extends RowData>({
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                   className='group/row'
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    navigate({ to: `/admin/products/${row.original.id}` }) // ✅ now typed
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      // className={cell.column.columnDef.meta?.className ?? ''}
-                    >
+                    <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -175,7 +137,6 @@ export function DataTable<TData extends RowData>({
           </TableBody>
         </Table>
       </div>
-      {/* <DataTablePagination table={table} /> */}
     </div>
   )
 }
