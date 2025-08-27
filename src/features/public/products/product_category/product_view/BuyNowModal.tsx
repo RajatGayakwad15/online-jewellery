@@ -28,7 +28,7 @@ const validationSchema = Yup.object({
   paymentMethod: Yup.string().required('Select payment method'),
 })
 
-const BuyNow: React.FC<BuyNowProps> = ({ product, isCart }) => {
+const BuyNow: React.FC<BuyNowProps> = ({ isCart }) => {
 //   const [quantity, setQuantity] = useState(1)
 const quantity = 1
 
