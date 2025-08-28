@@ -1,5 +1,5 @@
 // import React from 'react'
-import { Button } from '@/components/ui/button'
+// import { Button } from '@/components/ui/button'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 // import { TopNav } from '@/components/layout/top-nav'
@@ -26,9 +26,9 @@ const order = () => {
             <p className='text-muted-foreground'>Manage your Order here.</p>
           </div>
           {/* <UsersPrimaryButtons /> */}
-          <Button className='space-x-1'>
+          {/* <Button className='space-x-1'>
             <span>Add Order</span>
-          </Button>
+          </Button> */}
         </div>
         <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
                 {/* <UsersTable data={userList} columns={columns} /> */}

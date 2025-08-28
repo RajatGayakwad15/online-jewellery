@@ -25,6 +25,11 @@ const formSchema = z
       .string()
       .min(1, { message: 'Please enter your email' })
       .email({ message: 'Invalid email address' }),
+    phone: z
+      .string()
+      .min(1, { message: 'Please enter your phone number' })
+      .min(10, { message: 'Phone number must be at least 10 digits long' })
+      .regex(/^\d+$/, { message: 'Phone number must contain only digits' }),
     password: z
       .string()
       .min(1, {
@@ -48,6 +53,7 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
     defaultValues: {
       name:'',
       email: '',
+      phone: '',
       password: '',
       confirmPassword: '',
     },
@@ -91,6 +97,19 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input placeholder='email' {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name='phone'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Phone Number</FormLabel>
+              <FormControl>
+                <Input placeholder='Enter your phone number' type='tel' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

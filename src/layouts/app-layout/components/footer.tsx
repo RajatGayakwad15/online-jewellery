@@ -91,10 +91,10 @@ export const Footer = () => {
         <p className='text-muted-foreground text-sm'>
           &copy; {new Date().getFullYear()} Shreesha. All rights reserved.
         </p>
-        {/* <p className='flex items-center gap-2 text-sm'>
+        <p className='flex items-center gap-2 text-sm'>
           <Link to='/privacy-policy'>Privacy Policy</Link>|
           <Link to='/terms'>Terms & Conditions</Link>
-        </p> */}
+        </p>
         <p className='text-muted-foreground text-sm'>
           Designed and Developed by{' '}
           <a

@@ -49,10 +49,14 @@ import { Route as AdminSettingsNotificationsImport } from './routes/admin/settin
 import { Route as AdminSettingsDisplayImport } from './routes/admin/settings/display'
 import { Route as AdminSettingsAppearanceImport } from './routes/admin/settings/appearance'
 import { Route as AdminSettingsAccountImport } from './routes/admin/settings/account'
+import { Route as AdminUsersIdIndexImport } from './routes/admin/users/$id/index'
 import { Route as AdminProductsAddIndexImport } from './routes/admin/products/add/index'
 import { Route as AdminProductsIdIndexImport } from './routes/admin/products/$id/index'
+import { Route as AdminOrderIdIndexImport } from './routes/admin/order/$id/index'
+import { Route as AdminContactIdIndexImport } from './routes/admin/contact/$id/index'
 import { Route as PublicProductsCategoryIndexImport } from './routes/_public/products/$category/index'
 import { Route as AdminProductsUpdateIdIndexImport } from './routes/admin/products/update/$id/index'
+import { Route as AdminOrderUpdateIdIndexImport } from './routes/admin/order/update/$id/index'
 import { Route as PublicProductsCategoryIdIndexImport } from './routes/_public/products/$category/$id/index'
 import { Route as PublicProductsCategoryIdOrderIndexImport } from './routes/_public/products/$category/$id/order/index'
 
@@ -289,6 +293,12 @@ const AdminSettingsAccountRoute = AdminSettingsAccountImport.update({
   getParentRoute: () => AdminSettingsRouteRoute,
 } as any)
 
+const AdminUsersIdIndexRoute = AdminUsersIdIndexImport.update({
+  id: '/users/$id/',
+  path: '/users/$id/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+
 const AdminProductsAddIndexRoute = AdminProductsAddIndexImport.update({
   id: '/products/add/',
   path: '/products/add/',
@@ -298,6 +308,18 @@ const AdminProductsAddIndexRoute = AdminProductsAddIndexImport.update({
 const AdminProductsIdIndexRoute = AdminProductsIdIndexImport.update({
   id: '/products/$id/',
   path: '/products/$id/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+
+const AdminOrderIdIndexRoute = AdminOrderIdIndexImport.update({
+  id: '/order/$id/',
+  path: '/order/$id/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+
+const AdminContactIdIndexRoute = AdminContactIdIndexImport.update({
+  id: '/contact/$id/',
+  path: '/contact/$id/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 
@@ -315,6 +337,12 @@ const AdminProductsUpdateIdIndexRoute = AdminProductsUpdateIdIndexImport.update(
     getParentRoute: () => AdminRouteRoute,
   } as any,
 )
+
+const AdminOrderUpdateIdIndexRoute = AdminOrderUpdateIdIndexImport.update({
+  id: '/order/update/$id/',
+  path: '/order/update/$id/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 
 const PublicProductsCategoryIdIndexRoute =
   PublicProductsCategoryIdIndexImport.update({
@@ -607,6 +635,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicProductsCategoryIndexImport
       parentRoute: typeof PublicRouteImport
     }
+    '/admin/contact/$id/': {
+      id: '/admin/contact/$id/'
+      path: '/contact/$id'
+      fullPath: '/admin/contact/$id'
+      preLoaderRoute: typeof AdminContactIdIndexImport
+      parentRoute: typeof AdminRouteImport
+    }
+    '/admin/order/$id/': {
+      id: '/admin/order/$id/'
+      path: '/order/$id'
+      fullPath: '/admin/order/$id'
+      preLoaderRoute: typeof AdminOrderIdIndexImport
+      parentRoute: typeof AdminRouteImport
+    }
     '/admin/products/$id/': {
       id: '/admin/products/$id/'
       path: '/products/$id'
@@ -621,12 +663,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProductsAddIndexImport
       parentRoute: typeof AdminRouteImport
     }
+    '/admin/users/$id/': {
+      id: '/admin/users/$id/'
+      path: '/users/$id'
+      fullPath: '/admin/users/$id'
+      preLoaderRoute: typeof AdminUsersIdIndexImport
+      parentRoute: typeof AdminRouteImport
+    }
     '/_public/products/$category/$id/': {
       id: '/_public/products/$category/$id/'
       path: '/products/$category/$id'
       fullPath: '/products/$category/$id'
       preLoaderRoute: typeof PublicProductsCategoryIdIndexImport
       parentRoute: typeof PublicRouteImport
+    }
+    '/admin/order/update/$id/': {
+      id: '/admin/order/update/$id/'
+      path: '/order/update/$id'
+      fullPath: '/admin/order/update/$id'
+      preLoaderRoute: typeof AdminOrderUpdateIdIndexImport
+      parentRoute: typeof AdminRouteImport
     }
     '/admin/products/update/$id/': {
       id: '/admin/products/update/$id/'
@@ -708,8 +764,12 @@ interface AdminRouteRouteChildren {
   AdminProductsIndexRoute: typeof AdminProductsIndexRoute
   AdminTasksIndexRoute: typeof AdminTasksIndexRoute
   AdminUsersIndexRoute: typeof AdminUsersIndexRoute
+  AdminContactIdIndexRoute: typeof AdminContactIdIndexRoute
+  AdminOrderIdIndexRoute: typeof AdminOrderIdIndexRoute
   AdminProductsIdIndexRoute: typeof AdminProductsIdIndexRoute
   AdminProductsAddIndexRoute: typeof AdminProductsAddIndexRoute
+  AdminUsersIdIndexRoute: typeof AdminUsersIdIndexRoute
+  AdminOrderUpdateIdIndexRoute: typeof AdminOrderUpdateIdIndexRoute
   AdminProductsUpdateIdIndexRoute: typeof AdminProductsUpdateIdIndexRoute
 }
 
@@ -724,8 +784,12 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminProductsIndexRoute: AdminProductsIndexRoute,
   AdminTasksIndexRoute: AdminTasksIndexRoute,
   AdminUsersIndexRoute: AdminUsersIndexRoute,
+  AdminContactIdIndexRoute: AdminContactIdIndexRoute,
+  AdminOrderIdIndexRoute: AdminOrderIdIndexRoute,
   AdminProductsIdIndexRoute: AdminProductsIdIndexRoute,
   AdminProductsAddIndexRoute: AdminProductsAddIndexRoute,
+  AdminUsersIdIndexRoute: AdminUsersIdIndexRoute,
+  AdminOrderUpdateIdIndexRoute: AdminOrderUpdateIdIndexRoute,
   AdminProductsUpdateIdIndexRoute: AdminProductsUpdateIdIndexRoute,
 }
 
@@ -773,9 +837,13 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AdminUsersIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
   '/products/$category': typeof PublicProductsCategoryIndexRoute
+  '/admin/contact/$id': typeof AdminContactIdIndexRoute
+  '/admin/order/$id': typeof AdminOrderIdIndexRoute
   '/admin/products/$id': typeof AdminProductsIdIndexRoute
   '/admin/products/add': typeof AdminProductsAddIndexRoute
+  '/admin/users/$id': typeof AdminUsersIdIndexRoute
   '/products/$category/$id': typeof PublicProductsCategoryIdIndexRoute
+  '/admin/order/update/$id': typeof AdminOrderUpdateIdIndexRoute
   '/admin/products/update/$id': typeof AdminProductsUpdateIdIndexRoute
   '/products/$category/$id/order': typeof PublicProductsCategoryIdOrderIndexRoute
 }
@@ -817,9 +885,13 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AdminUsersIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
   '/products/$category': typeof PublicProductsCategoryIndexRoute
+  '/admin/contact/$id': typeof AdminContactIdIndexRoute
+  '/admin/order/$id': typeof AdminOrderIdIndexRoute
   '/admin/products/$id': typeof AdminProductsIdIndexRoute
   '/admin/products/add': typeof AdminProductsAddIndexRoute
+  '/admin/users/$id': typeof AdminUsersIdIndexRoute
   '/products/$category/$id': typeof PublicProductsCategoryIdIndexRoute
+  '/admin/order/update/$id': typeof AdminOrderUpdateIdIndexRoute
   '/admin/products/update/$id': typeof AdminProductsUpdateIdIndexRoute
   '/products/$category/$id/order': typeof PublicProductsCategoryIdOrderIndexRoute
 }
@@ -865,9 +937,13 @@ export interface FileRoutesById {
   '/admin/users/': typeof AdminUsersIndexRoute
   '/auth/login/': typeof AuthLoginIndexRoute
   '/_public/products/$category/': typeof PublicProductsCategoryIndexRoute
+  '/admin/contact/$id/': typeof AdminContactIdIndexRoute
+  '/admin/order/$id/': typeof AdminOrderIdIndexRoute
   '/admin/products/$id/': typeof AdminProductsIdIndexRoute
   '/admin/products/add/': typeof AdminProductsAddIndexRoute
+  '/admin/users/$id/': typeof AdminUsersIdIndexRoute
   '/_public/products/$category/$id/': typeof PublicProductsCategoryIdIndexRoute
+  '/admin/order/update/$id/': typeof AdminOrderUpdateIdIndexRoute
   '/admin/products/update/$id/': typeof AdminProductsUpdateIdIndexRoute
   '/_public/products/$category/$id/order/': typeof PublicProductsCategoryIdOrderIndexRoute
 }
@@ -914,9 +990,13 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/auth/login'
     | '/products/$category'
+    | '/admin/contact/$id'
+    | '/admin/order/$id'
     | '/admin/products/$id'
     | '/admin/products/add'
+    | '/admin/users/$id'
     | '/products/$category/$id'
+    | '/admin/order/update/$id'
     | '/admin/products/update/$id'
     | '/products/$category/$id/order'
   fileRoutesByTo: FileRoutesByTo
@@ -957,9 +1037,13 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/auth/login'
     | '/products/$category'
+    | '/admin/contact/$id'
+    | '/admin/order/$id'
     | '/admin/products/$id'
     | '/admin/products/add'
+    | '/admin/users/$id'
     | '/products/$category/$id'
+    | '/admin/order/update/$id'
     | '/admin/products/update/$id'
     | '/products/$category/$id/order'
   id:
@@ -1003,9 +1087,13 @@ export interface FileRouteTypes {
     | '/admin/users/'
     | '/auth/login/'
     | '/_public/products/$category/'
+    | '/admin/contact/$id/'
+    | '/admin/order/$id/'
     | '/admin/products/$id/'
     | '/admin/products/add/'
+    | '/admin/users/$id/'
     | '/_public/products/$category/$id/'
+    | '/admin/order/update/$id/'
     | '/admin/products/update/$id/'
     | '/_public/products/$category/$id/order/'
   fileRoutesById: FileRoutesById
@@ -1105,8 +1193,12 @@ export const routeTree = rootRoute
         "/admin/products/",
         "/admin/tasks/",
         "/admin/users/",
+        "/admin/contact/$id/",
+        "/admin/order/$id/",
         "/admin/products/$id/",
         "/admin/products/add/",
+        "/admin/users/$id/",
+        "/admin/order/update/$id/",
         "/admin/products/update/$id/"
       ]
     },
@@ -1251,6 +1343,14 @@ export const routeTree = rootRoute
       "filePath": "_public/products/$category/index.tsx",
       "parent": "/_public"
     },
+    "/admin/contact/$id/": {
+      "filePath": "admin/contact/$id/index.tsx",
+      "parent": "/admin"
+    },
+    "/admin/order/$id/": {
+      "filePath": "admin/order/$id/index.tsx",
+      "parent": "/admin"
+    },
     "/admin/products/$id/": {
       "filePath": "admin/products/$id/index.tsx",
       "parent": "/admin"
@@ -1259,9 +1359,17 @@ export const routeTree = rootRoute
       "filePath": "admin/products/add/index.tsx",
       "parent": "/admin"
     },
+    "/admin/users/$id/": {
+      "filePath": "admin/users/$id/index.tsx",
+      "parent": "/admin"
+    },
     "/_public/products/$category/$id/": {
       "filePath": "_public/products/$category/$id/index.tsx",
       "parent": "/_public"
+    },
+    "/admin/order/update/$id/": {
+      "filePath": "admin/order/update/$id/index.tsx",
+      "parent": "/admin"
     },
     "/admin/products/update/$id/": {
       "filePath": "admin/products/update/$id/index.tsx",

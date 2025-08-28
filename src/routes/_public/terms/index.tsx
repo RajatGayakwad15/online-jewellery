@@ -1,3 +1,4 @@
+import Term from '@/features/public/term'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_public/terms/')({
@@ -5,5 +6,5 @@ export const Route = createFileRoute('/_public/terms/')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/_public/terms/"!</div>
+  return <Term />
 }

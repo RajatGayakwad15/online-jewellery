@@ -6,7 +6,7 @@ import { DataTable } from './DataTable.tsx'
 // import { cn } from '@/lib/utils'
 // import { DataTableRowActions } from './DataTableRowActions.tsx'
 import { Button } from '@/components/ui/button.tsx'
-import { Edit, Trash } from 'lucide-react'
+import {  Trash } from 'lucide-react'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTrigger } from '@/components/ui/alert-dialog.tsx'
 
 // Define User type
@@ -103,13 +103,13 @@ const columns: ColumnDef<User>[] = [
     //   header: "Actions",
       cell: () => (
         <div className="flex space-x-2 justify-center">
-          <div className="relative group">
+          {/* <div className="relative group">
             <Button
               variant="ghost"
               className="h-8 w-8 p-0 cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
-                // handleEditClick(row.original.id);
+                handleEditClick(row.original.id);
               }}
             >
               <Edit size={16} />
@@ -117,7 +117,7 @@ const columns: ColumnDef<User>[] = [
             <span className="absolute bottom-full left-1/2 -translate-x-1/2 mt-2 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded-md">
               Edit
             </span>
-          </div>
+          </div> */}
 
           <div className="relative group">
             <AlertDialog>

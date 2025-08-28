@@ -111,7 +111,7 @@ export function DataTable<TData extends RowData & { id: string | number }>({
                   className='group/row'
                   onClick={(e) => {
                     e.stopPropagation()
-                    navigate({ to: `/admin/products/${row.original.id}` }) // ✅ now typed
+                    navigate({ to: `${row.original.id}` }) // ✅ now typed
                   }}
                 >
                   {row.getVisibleCells().map((cell) => (
