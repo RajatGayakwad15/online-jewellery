@@ -1,4 +1,4 @@
-# Kumthekar Furniture
+# online jwellery
 
 **Kumthekar Furniture** is a modern e-commerce platform built for a premium furniture store located in **Kolhapur**. The website showcases a wide variety of home and office furniture with an intuitive and elegant shopping experience.
 
@@ -110,3 +110,121 @@ pnpm run deploy
 
 For inquiries or support, visit us at: [www.kumthekarfurniture.in](https://www.kumthekarfurniture.in)
 # online-jewellery
+ Setup Instructions
+1. Clone the Repository
+git clone https://github.com/yourusername/online-jewellery.git
+cd online-jewellery
+
+
+2. Install Dependencies
+pnpm install
+
+
+3. Configure Environment Variables
+Create .env and .env.development files based on .env.example. Set your API base URLs and keys accordingly.
+
+🚀 Development
+Run Local Development Server
+pnpm run dev
+
+
+Visit http://localhost:5173 to explore the app locally.
+Run with Production Backend
+pnpm run start
+
+
+⚠️ Ensure the correct .env file is active for your mode.
+
+
+📦 Deployment
+Build for Production
+pnpm run build
+
+
+Outputs static files to the dist/ directory.
+Deploy to GitHub Pages (Optional)
+pnpm run predeploy
+pnpm run deploy
+
+
+Update vite.config.ts with the correct base path if needed.
+
+
+💡 Features
+- Jewellery catalog with filters by type, metal, price, and occasion
+- Product detail pages with zoomable images and specifications
+- Cart and secure checkout flow
+- Mobile-first responsive design
+- SEO-optimized routing and metadata
+- Wishlist and user account features (optional)
+
+📞 Contact
+For business inquiries or support, reach out via: www.onlinejewellery.com
+
+Would you like help scaffolding the actual repo or setting up the backend API structure for this jewellery store?
+Create .env and .env.development files based on .env.example. Set your API base URLs and keys accordingly.
+
+🚀 Development
+Run Local Development Server
+pnpm run dev
+
+
+Visit http://localhost:5173 to explore the app locally.
+Run with Production Backend
+pnpm run start
+
+
+⚠️ Ensure the correct .env file is active for your mode.
+
+
+📦 Deployment
+Build for Production
+pnpm run build
+
+
+Outputs static files to the dist/ directory.
+Deploy to GitHub Pages (Optional)
+pnpm run predeploy
+pnpm run deploy
+
+
+Update vite.config.ts with the correct base path if needed.
+
+
+💡 Features
+- Jewellery catalog with filters by type, metal, price, and occasion
+- Product detail pages with zoomable images and specifications
+- Cart and secure checkout flow
+- Mobile-first responsive design
+- SEO-optimized routing and metadata
+- Wishlist and user account features (optional)
+
+📞 Contact
+For business inquiries or support, reach out via: www.onlinejewellery.com
+
+Would you like help scaffolding the actual repo or setting up the backend API structure for this jewellery store?
+Build for Production
+pnpm run build
+
+
+Outputs static files to the dist/ directory.
+Deploy to GitHub Pages (Optional)
+pnpm run predeploy
+pnpm run deploy
+
+
+Update vite.config.ts with the correct base path if needed.
+
+ Features
+- Jewellery catalog with filters by type, metal, price, and occasion
+- Product detail pages with zoomable images and specifications
+- Cart and secure checkout flow
+- Mobile-first responsive design
+- SEO-optimized routing and metadata
+- Wishlist and user account features (optional)
+
+📞 Contact
+For business inquiries or support, reach out via: www.onlinejewellery.com
+
+Would you like help scaffolding the actual repo or setting up the backend API structure for this jewellery store?
+For business inquiries or support, reach out via:https://shreesha.shop/
