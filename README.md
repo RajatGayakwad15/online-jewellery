@@ -1,6 +1,6 @@
 # online jwellery
 
-**Kumthekar Furniture** is a modern e-commerce platform built for a premium furniture store located in **Kolhapur**. The website showcases a wide variety of home and office furniture with an intuitive and elegant shopping experience.
+** online jwellery** is a modern e-commerce platform built for a premium jwellery store located in **benguluru**. The website showcases a wide variety  with an intuitive and elegant shopping experience.
 
 Our frontend is developed using **React**, **TypeScript**, and **Vite**, with **Tailwind CSS** and **shadcn/ui** for a stylish, responsive design. The application uses **TanStack Query** for efficient and optimized data-fetching and state management.
 
