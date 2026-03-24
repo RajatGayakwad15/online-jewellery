@@ -7,5 +7,5 @@ export const Route = createFileRoute('/_public/products/$category/$id/order/')({
 })
 
 function RouteComponent() {
-  return <BuyNow isCart={false} />
+  return <BuyNow />
 }
