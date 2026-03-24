@@ -78,7 +78,7 @@ export const Footer = () => {
               Bengaluru – 560001, Karnataka, India
             </p>
             <p className='text-muted-foreground'>
-              <strong>Phone:</strong> +91 88888 88888 <br />
+              <strong>Phone:</strong> +91 77090 33447 <br />
               <strong>Email:</strong> shreesha.com
             </p>
           </div>
