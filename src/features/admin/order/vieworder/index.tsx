@@ -1,5 +1,7 @@
+'use client'
+
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { useParams, useRouter } from 'next/navigation'
 import {
   MapPinHouse,
   ShoppingCart,
@@ -53,8 +55,9 @@ type OrderDoc = {
 }
 
 const ViewOrder = () => {
-  const navigate = useNavigate()
-  const { id } = useParams({ strict: false }) as { id: string }
+  const router = useRouter()
+  const params = useParams()
+  const id = params.id as string
 
   const [order, setOrder] = useState<OrderDoc | null>(null)
   const [loading, setLoading] = useState(true)
@@ -100,7 +103,7 @@ const ViewOrder = () => {
       toast.success('Order deleted successfully!', {
         style: { background: 'black', color: 'white', border: '1px solid #333' },
       })
-      navigate({ to: '/admin/order' })
+      router.push('/admin/order')
     } catch {
       toast.error('Failed to delete order')
     } finally {

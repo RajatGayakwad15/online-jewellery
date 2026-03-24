@@ -1,4 +1,6 @@
-import { useParams, useNavigate } from '@tanstack/react-router'
+'use client'
+
+import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import Image from '@/components/image'
 import p1 from '@/assets/products/rings-cat.jpg'
@@ -123,9 +125,9 @@ const categories = [
 ]
 
 const productslug = () => {
-  const params = useParams({ strict: false }) as { slug?: string }
-  const navigate = useNavigate()
-  const slug = params.slug
+  const params = useParams()
+  const router = useRouter()
+  const slug = params.slug as string | undefined
 
   // For filter modal on mobile
   const [showFilter, setShowFilter] = useState(false)
@@ -143,7 +145,7 @@ const productslug = () => {
   // Handle category change (slug change)
   const handleCategoryClick = (cat: string) => {
     // Change route to /products/:slug
-    navigate({ to: `/products/${cat}` })
+    router.push(`/products/${cat}`)
     // Optionally reset filters
     setFilters({ material: [], price: [] })
     setShowFilter(false)
@@ -155,7 +157,7 @@ const productslug = () => {
     <>
       <div>
         <img
-          src={frontimage}
+          src={frontimage.src}
           alt="Banner"
           className="h-30 lg:h-80 w-full object-contain md:object-cover transition-all duration-500 ease-out"
         />
@@ -233,7 +235,7 @@ const productslug = () => {
                   </span>
                   <button
                     className="bg-primary text-white px-4 py-2 rounded-md"
-                    onClick={() => navigate({ to: '/contact' })}
+                    onClick={() => router.push('/contact')}
                   >
                     Contact Us
                   </button>

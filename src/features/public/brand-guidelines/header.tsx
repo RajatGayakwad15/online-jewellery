@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import Link from 'next/link'
 import branding from '@/assets/branding/branding.png'
 import { buttonVariants } from '@/components/ui/button'
 
@@ -25,7 +25,9 @@ const Header = () => {
           <div className='relative w-full pb-[50%]'>
             <div
               className='animate-scroll absolute inset-0 bg-cover bg-center'
-              style={{ backgroundImage: `url(${branding})` }}
+              style={{
+                backgroundImage: `url(${typeof branding === 'string' ? branding : branding.src})`,
+              }}
             />
           </div>
         </div>
@@ -49,7 +51,7 @@ const Header = () => {
           </p>
 
           <div className='pt-4 text-right'>
-            <Link to='/about' className={buttonVariants()}>
+            <Link href='/about' className={buttonVariants()}>
               Learn More About Us
             </Link>
           </div>

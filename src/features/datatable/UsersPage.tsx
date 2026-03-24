@@ -1,6 +1,8 @@
+'use client'
+
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ColumnDef } from '@tanstack/react-table'
-import { useNavigate } from '@tanstack/react-router'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { Trash } from 'lucide-react'
 import { DataTable } from './DataTable.tsx'
@@ -25,7 +27,7 @@ type UserRow = {
 }
 
 export default function UsersPage() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [users, setUsers] = useState<UserRow[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -131,12 +133,9 @@ export default function UsersPage() {
 
   const handleRowClick = useCallback(
     (row: UserRow) => {
-      navigate({
-        to: '/admin/users/$id',
-        params: { id: row.id },
-      })
+      router.push(`/admin/users/${row.id}`)
     },
-    [navigate]
+    [router]
   )
 
   return (

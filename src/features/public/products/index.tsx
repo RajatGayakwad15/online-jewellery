@@ -6,7 +6,7 @@ const Products = () => {
     <>
      <div>
         <img
-          src={frontimage}
+          src={frontimage.src}
           alt="Modern Jewellery Showcase"
           className="h-30 lg:h-80 w-full object-contain md:object-cover transition-all duration-500 ease-out"
         />

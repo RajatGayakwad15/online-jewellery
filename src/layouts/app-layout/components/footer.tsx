@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import Link from 'next/link'
 // import Image from '@/components/image'
 // import Logo from '/images/logo.png'
 
@@ -27,7 +27,7 @@ export const Footer = () => {
             <ul className='text-muted-foreground flex flex-col gap-2'>
               <li>
                 <Link
-                  to='/'
+                  href='/'
                   className='hover:text-accent-foreground transition'
                 >
                   Home
@@ -35,7 +35,7 @@ export const Footer = () => {
               </li>
               <li>
                 <Link
-                  to='/products'
+                  href='/products'
                   className='hover:text-accent-foreground transition'
                 >
                   Products
@@ -43,7 +43,7 @@ export const Footer = () => {
               </li>
               <li>
                 <Link
-                  to='/about'
+                  href='/about'
                   className='hover:text-accent-foreground transition'
                 >
                   About Us
@@ -51,7 +51,7 @@ export const Footer = () => {
               </li>
               <li>
                 <Link
-                  to='/contact'
+                  href='/contact'
                   className='hover:text-accent-foreground transition'
                 >
                   Contact
@@ -92,8 +92,8 @@ export const Footer = () => {
           &copy; {new Date().getFullYear()} Shreesha. All rights reserved.
         </p>
         <p className='flex items-center gap-2 text-sm'>
-          <Link to='/privacy-policy'>Privacy Policy</Link>|
-          <Link to='/terms'>Terms & Conditions</Link>
+          <Link href='/privacy-policy'>Privacy Policy</Link>|
+          <Link href='/terms'>Terms & Conditions</Link>
         </p>
         <p className='text-muted-foreground text-sm'>
           Designed and Developed by{' '}

@@ -1,6 +1,8 @@
+'use client'
+
 import  { useEffect, useState } from "react"
 // import { useMutation, useQuery } from "@tanstack/react-query"
-import { useNavigate } from "@tanstack/react-router"
+import { useRouter } from "next/navigation"
 import { Formik, Form, Field } from "formik"
 import * as Yup from "yup"
 // import { GetOrderDetails, OrderUpdate } from "@/api/admin/order/orderapi.jsx"
@@ -64,7 +66,7 @@ const UpdateOrder = () => {
       .required("Pincode is required"),
   })
 
-  const navigate = useNavigate()
+  const router = useRouter()
 
   // const { mutate: updatedorder, isPending: updatedorderispending } =
   //   useMutation({
@@ -95,7 +97,7 @@ const UpdateOrder = () => {
         duration: 4000,
         style: { background: "#111", color: "#fff", border: "1px solid #333" },
       })
-      navigate({ to: "/admin/order" })
+      router.push("/admin/order")
     }, 2000)
     // updatedorder(values, id)
   }

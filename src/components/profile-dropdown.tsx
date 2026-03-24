@@ -1,5 +1,7 @@
+'use client'
+
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { useRouter } from 'next/navigation'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -22,7 +24,7 @@ function initialsFromProfile(name: string | undefined, email: string | undefined
 }
 
 export function ProfileDropdown() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const token = useAuthStore((s) => s.auth.accessToken)
   const reset = useAuthStore((s) => s.auth.reset)
 
@@ -65,7 +67,7 @@ export function ProfileDropdown() {
 
   const handleLogout = () => {
     reset()
-    navigate({ to: '/sign-in' })
+    router.push('/sign-in')
   }
 
   return (
@@ -103,7 +105,7 @@ export function ProfileDropdown() {
           onSelect={(e) => {
             e.preventDefault()
             if (token) handleLogout()
-            else navigate({ to: '/sign-in' })
+            else router.push('/sign-in')
           }}
         >
           {token ? 'Log out' : 'Sign in'}

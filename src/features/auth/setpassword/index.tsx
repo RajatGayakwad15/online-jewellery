@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import AuthLayout from '../auth-layout'
-import { SignUpForm } from './components/setpassword-forrm.tsx'
+import { SignUpForm } from './components/setpassword-forrm'
 
 export default function Setpassword() {
   return (

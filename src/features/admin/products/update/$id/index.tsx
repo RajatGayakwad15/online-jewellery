@@ -30,9 +30,10 @@
 
 // export default UpdateProduct
 
+'use client'
+
 import { useEffect, useState } from 'react'
-// import { useMutation, useQuery } from '@tanstack/react-query'
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { useParams, useRouter } from 'next/navigation'
 import {
   Formik,
   FieldArray,
@@ -240,8 +241,9 @@ const UpdateProduct = () => {
   const [activeTab, setActiveTab] = useState('General')
   const currentIndex = tabs.indexOf(activeTab)
   const isLastTab = currentIndex === tabs.length - 1
-  const navigate = useNavigate()
-  const { id } = useParams({ strict: false }) as { id: string }
+  const router = useRouter()
+  const params = useParams()
+  const id = params.id as string
 
   type Category = {
     id: string
@@ -491,7 +493,7 @@ const UpdateProduct = () => {
                   })
 
                   toast.success('Product updated successfully!')
-                  navigate({ to: '/admin/products' })
+                  router.push('/admin/products')
                 } catch (err) {
                   const msg =
                     isAxiosError(err) && err.response?.data?.title

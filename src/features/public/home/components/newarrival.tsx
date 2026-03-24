@@ -1,15 +1,15 @@
+"use client";
+
 // import React from "react";
 import image from "@/assets/neklase2.jpg";
 import neklase from "@/assets/sets.webp";
 import neklase3 from "@/assets/neklase3.webp"
-import { useNavigate } from "@tanstack/react-router";
-
-
+import { useRouter } from "next/navigation";
 
 const NewArrival = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const handleClick = () => {
-    navigate({ to: '/products' }); // Change the path to your desired route
+    router.push('/products');
   };
   return (
     <div className=" p-6">
@@ -17,7 +17,7 @@ const NewArrival = () => {
       <div
   className="relative bg-cover bg-right text-white py-16 px-6 rounded-lg overflow-hidden"
   style={{
-    backgroundImage: `url(${neklase})`,
+    backgroundImage: `url(${neklase.src})`,
     backgroundSize: "cover",
     backgroundPosition: "right", // Image positioned to the right
     position: "relative",
@@ -43,14 +43,14 @@ const NewArrival = () => {
       {/* Product Categories */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
         <div className="relative rounded-lg overflow-hidden">
-          <img src={image} alt="Nosepins" className="w-full" />
+          <img src={image.src} alt="Nosepins" className="w-full" />
           <span className="absolute bottom-4 left-4 text-white text-lg font-semibold">
             Nosepins
           </span>
         </div>
         <div className="relative rounded-lg overflow-hidden">
           <img
-            src={neklase3}
+            src={neklase3.src}
             alt="Kids Jewellery"
             className="w-full h-full"
           />

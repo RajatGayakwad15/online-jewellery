@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 // import * as React from 'react'
 // import toast from 'react-hot-toast'
@@ -6,7 +8,7 @@ import { useEffect, useState } from 'react'
 import support from '@/assets/icons/customer-support.png'
 import Warranty from '@/assets/icons/guarantee.png'
 import trophy from '@/assets/icons/trophy 1.png'
-import { useParams } from '@tanstack/react-router'
+import { useParams } from 'next/navigation'
 import { apiClient } from '@/lib/apiClient'
 // import React from 'react'
 import { Header } from '@/components/layout/header'
@@ -29,17 +31,17 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 const features = [
   {
-    icon: trophy, // use an icon that fits
+    icon: typeof trophy === 'string' ? trophy : (trophy as { src: string }).src,
     title: "Premium Quality",
     description: "Crafted with genuine diamonds & gold",
   },
   {
-    icon: Warranty,
+    icon: typeof Warranty === 'string' ? Warranty : (Warranty as { src: string }).src,
     title: "Authenticity Guarantee",
     description: "Certified by leading gem labs",
   },
   {
-    icon: support,
+    icon: typeof support === 'string' ? support : (support as { src: string }).src,
     title: "Lifetime Service",
     description: "Free cleaning & polishing",
   },
@@ -53,7 +55,8 @@ const features = [
 
 
 const ViewProducts = () => {
-  const { id } = useParams({ strict: false }) as { id: string }
+  const params = useParams()
+  const id = params.id as string
 
   type Product = {
     id: string;

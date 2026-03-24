@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import Link from 'next/link'
 import sideImg from '@/assets/img-10.png'
 import { buttonVariants } from '@/components/ui/button'
 import Image from '@/components/image'
@@ -38,11 +38,11 @@ export const About = () => {
               </p>
 
               <div className='mt-6 flex flex-wrap gap-4'>
-                <Link to='/about' className={`${buttonVariants()}`}>
+                <Link href='/about' className={`${buttonVariants()}`}>
                   Learn More About Us
                 </Link>
                 <Link
-                  to='/about'
+                  href='/about'
                   className={`${buttonVariants({ variant: 'outline' })}`}
                 >
                   Contact Us

@@ -1,6 +1,8 @@
+'use client'
+
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ColumnDef } from '@tanstack/react-table'
-import { useNavigate } from '@tanstack/react-router'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { Trash } from 'lucide-react'
 
@@ -27,7 +29,7 @@ type ContactRow = {
 }
 
 export default function ContactPage() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [contacts, setContacts] = useState<ContactRow[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -132,12 +134,9 @@ export default function ContactPage() {
 
   const onRowClick = useCallback(
     (row: ContactRow) => {
-      navigate({
-        to: '/admin/contact/$id',
-        params: { id: row.id },
-      })
+      router.push(`/admin/contact/${row.id}`)
     },
-    [navigate]
+    [router]
   )
 
   return (

@@ -1,3 +1,5 @@
+'use client'
+
 import { HTMLAttributes, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -19,7 +21,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
-import { useNavigate } from '@tanstack/react-router'
+import { useRouter } from 'next/navigation'
 
 type UserAuthFormProps = HTMLAttributes<HTMLFormElement>
 
@@ -40,7 +42,7 @@ const formSchema = z.object({
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate()
+  const router = useRouter()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -77,7 +79,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         // Admin routes will still be protected by /admin guard.
       }
 
-      navigate({ to: role === 'admin' ? '/admin' : '/' })
+      router.push(role === 'admin' ? '/admin' : '/')
     } catch (err: any) {
       const msg = err?.response?.data?.title ?? 'Login failed. Please try again.'
       toast.error(String(msg))

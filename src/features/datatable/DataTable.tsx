@@ -1,4 +1,6 @@
 // components/DataTable.tsx
+'use client'
+
 import { useState } from 'react'
 import {
   ColumnDef,
@@ -25,7 +27,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Input } from '@/components/ui/input'
-import { useNavigate } from '@tanstack/react-router'
+import { useRouter } from 'next/navigation'
 
 // Extend RowData with id so TypeScript knows it exists
 interface DataTableProps<TData extends RowData & { id: string | number }> {
@@ -66,7 +68,7 @@ export function DataTable<TData extends RowData & { id: string | number }>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState('')
   const [sorting, setSorting] = useState<SortingState>([])
-  const navigate = useNavigate()
+  const router = useRouter()
 
   const table = useReactTable({
     data,
@@ -138,7 +140,7 @@ export function DataTable<TData extends RowData & { id: string | number }>({
                       onRowClick(row.original)
                       return
                     }
-                    navigate({ to: `${row.original.id}` })
+                    router.push(`${row.original.id}`)
                   }}
                 >
                   {row.getVisibleCells().map((cell) => (

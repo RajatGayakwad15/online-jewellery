@@ -30,9 +30,10 @@
 
 // export default AddProduct
 
+'use client'
+
 import { useEffect, useState } from 'react'
-// import { useMutation, useQuery } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { useRouter } from 'next/navigation'
 import {
   Formik,
   FieldArray,
@@ -241,7 +242,7 @@ const AddProduct = () => {
   const [activeTab, setActiveTab] = useState('General')
   const currentIndex = tabs.indexOf(activeTab)
   const isLastTab = currentIndex === tabs.length - 1
-  const navigate = useNavigate()
+  const router = useRouter()
 
   type Category = {
     id: string
@@ -453,7 +454,7 @@ const AddProduct = () => {
                   })
 
                   toast.success('Product added successfully!')
-                  navigate({ to: '/admin/products' })
+                  router.push('/admin/products')
                 } catch (err) {
                   const msg =
                     isAxiosError(err) && err.response?.data?.title

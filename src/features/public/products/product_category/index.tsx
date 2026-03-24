@@ -1,6 +1,9 @@
 // ProductCategory.tsx
+'use client'
+
 import { useEffect, useState } from 'react'
-import { Link, useParams } from '@tanstack/react-router'
+import Link from 'next/link'
+import { useParams } from 'next/navigation'
 // import { X } from 'lucide-react'
 // import ReactSlider from 'react-slider'
 import Img1 from '@/assets/extra imges/product-front-image.webp'
@@ -26,7 +29,8 @@ type Product = {
 }
 
 export default function ProductCategory() {
-  const { category } = useParams({ strict: false }) as { category: string }
+  const params = useParams()
+  const category = params.category as string
   const [modalOpen, setModalOpen] = useState(false)
   const [minVal, setMinVal] = useState(0)
   const [maxVal, setMaxVal] = useState(0)
@@ -103,7 +107,7 @@ export default function ProductCategory() {
         className='h-30 lg:h-80 w-full object-contain md:object-cover transition-all duration-500 ease-out group-hover:scale-110'
       /> */}
        <img
-          src={Img1}
+          src={Img1.src}
           alt="Modern Jewellery Showcase"
           className="h-30 lg:h-80 w-full object-contain md:object-cover transition-all duration-500 ease-out"
         />
@@ -164,7 +168,7 @@ export default function ProductCategory() {
                 <Link
                   key={product.id}
                   // to={`/products/${category}/${product.id}`}
-                  to={`/products/${category}/${product.id}` as any}
+                  href={`/products/${category}/${product.id}`}
                 >
                   <Card className='bg-destructive-foreground w-64 rounded-2xl p-3 shadow-md transition'>
                     <div className='relative overflow-hidden rounded-xl'>
@@ -193,7 +197,7 @@ export default function ProductCategory() {
                     No jewelry found in this price range
                   </div>
                   <div>
-                    <Link to='/contact' className={buttonVariants()}>
+                    <Link href='/contact' className={buttonVariants()}>
                       Please Contact Us
                     </Link>
                   </div>
@@ -281,7 +285,7 @@ const FilterComponent = ({
             getProduct.map((item: any) => (
               <li key={item.id}>
                 <Link
-                  to={`/products/${item.slug}` as any}
+                  href={`/products/${item.slug}`}
                   className='hover:bg-muted block rounded-md px-3 py-2 text-sm transition-colors'
                 >
                   {item.name}

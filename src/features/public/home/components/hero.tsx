@@ -76,15 +76,16 @@
 // import React from 'react';
 // import homevideo from "../assets/extra imges/homevideo1.mp4"
 
+'use client'
+
 import heroBg from '@/assets/heriimage new.jpg'
-// import { useNavigate } from 'react-router';
-import { useNavigate } from '@tanstack/react-router';
+import { useRouter } from 'next/navigation';
 
 
 export const Hero = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const handleClick = () => {
-    navigate({to: "/products"}); // Change the path to your desired route
+    router.push("/products");
   };
   return (
     <>
@@ -97,9 +98,11 @@ export const Hero = () => {
   muted
   className="absolute inset-0 w-full h-full object-cover opacity-70"
 ></video> */}
-<img src={heroBg} alt='image1' className='absolute inset-0 w-full h-full object-cover opacity-70'>
-
-</img>
+<img
+          src={typeof heroBg === 'string' ? heroBg : heroBg.src}
+          alt='image1'
+          className='absolute inset-0 w-full h-full object-cover opacity-70'
+        />
 
       
       <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-60"></div>

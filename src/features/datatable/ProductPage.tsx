@@ -1,4 +1,6 @@
 // pages/UsersPage.tsx
+'use client'
+
 import { useEffect, useState } from 'react'
 import { ColumnDef } from '@tanstack/react-table'
 import { DataTable } from './DataTable.tsx'
@@ -17,7 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog.tsx'
-import { useNavigate } from '@tanstack/react-router'
+import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { apiClient } from '@/lib/apiClient'
 
@@ -30,7 +32,7 @@ type ProductRow = {
 }
 
 export default function ProductPage() {
-  const navigate = useNavigate() // ✅ moved inside component
+  const router = useRouter()
 
   const [products, setProducts] = useState<ProductRow[]>([])
   const [loading, setLoading] = useState(true)
@@ -89,7 +91,7 @@ export default function ProductPage() {
               className="h-8 w-8 p-0 cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation()
-                navigate({ to: `/admin/products/update/${row.original.id}` })
+                router.push(`/admin/products/update/${row.original.id}`)
               }}
             >
               <Edit size={16} />

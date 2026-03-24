@@ -9,7 +9,7 @@ import { Service } from './components/service'
 // import { Services } from './components/services'
 // import { Testimonials } from './components/testimonials'
 import { buttonVariants } from '@/components/ui/button'
-import { Link } from '@tanstack/react-router'
+import Link from 'next/link'
 
 const Home = () => {
   return (
@@ -20,7 +20,7 @@ const Home = () => {
       <Service />
       <Products />
       <div className='mb-10 lg:mt-10 text-center'>
-        <Link to='/products' className={`px-8 ${buttonVariants()}`}>
+        <Link href='/products' className={`px-8 ${buttonVariants()}`}>
           See All Products
         </Link>
       </div>

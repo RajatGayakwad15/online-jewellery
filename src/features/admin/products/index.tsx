@@ -1,5 +1,5 @@
 // import React from 'react'
-import { Link } from '@tanstack/react-router'
+import Link from 'next/link'
 // import { UsersPrimaryButtons } from '@/features/users/components/users-primary-buttons'
 // import { IconPlus } from '@tabler/icons-react'
 import {  buttonVariants } from '@/components/ui/button'
@@ -33,7 +33,7 @@ const products = () => {
         <span>Add Product</span> 
       </Button> */}
           <Link
-            to='/admin/products/add'
+            href='/admin/products/add'
             // onClick={() => setIsOpen(false)}
             className={`  ${buttonVariants()}`}
           >

@@ -1,12 +1,15 @@
+'use client'
+
 import { Download, Check, X } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Image from '@/components/image'
-import logo_space from '/images/logo-icon.png'
-import logo_size from '/images/logo-icon.png'
-import greenBg from '/images/logo-icon.png'
-import logo from '/images/logo-icon.png'
-import logoDark from '/images/logo.png'
-import logoLight from '/images/logo.png'
+
+const logo_space = '/images/logo-icon.png'
+const logo_size = '/images/logo-icon.png'
+const greenBg = '/images/logo-icon.png'
+const logo = '/images/logo-icon.png'
+const logoDark = '/images/logo.png'
+const logoLight = '/images/logo.png'
 
 const LogoSection = () => {
   const handleDownload = (imageSrc: string, label: string) => {

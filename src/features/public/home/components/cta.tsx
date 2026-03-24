@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import Link from 'next/link'
 import { buttonVariants } from '@/components/ui/button'
 
 export const Cta = () => {
@@ -25,13 +25,13 @@ export const Cta = () => {
 
         <div className='space-y-4 lg:col-start-2'>
           <Link
-            to='/contact'
+            href='/contact'
             className={`w-full md:mr-4 md:w-auto ${buttonVariants()}`}
           >
             Get a Custom Quote
           </Link>
           <Link
-            to='/products'
+            href='/products'
             className={`w-full md:w-auto ${buttonVariants({
               variant: 'outline',
             })}`}

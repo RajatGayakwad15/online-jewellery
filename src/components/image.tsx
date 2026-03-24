@@ -1,9 +1,18 @@
 import React, { useState } from 'react'
+import type { StaticImageData } from 'next/image'
 import { cn } from '@/lib/utils'
 
-interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
-  src?: string
-  fallbackSrc?: string
+function resolveImageSrc(
+  src: string | StaticImageData | undefined
+): string | undefined {
+  if (src == null) return undefined
+  return typeof src === 'string' ? src : src.src
+}
+
+interface ImageProps
+  extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src'> {
+  src?: string | StaticImageData
+  fallbackSrc?: string | StaticImageData
   className?: string
   imgClassName?: string
   alt?: string
@@ -23,11 +32,14 @@ const Image: React.FC<ImageProps> = ({
   const [srcError, setSrcError] = useState(false)
   const [fallbackError, setFallbackError] = useState(false)
 
+  const resolvedSrc = resolveImageSrc(src)
+  const resolvedFallback = resolveImageSrc(fallbackSrc)
+
   const currentSrc = srcError
     ? fallbackError
       ? null
-      : fallbackSrc
-    : src || fallbackSrc
+      : resolvedFallback
+    : resolvedSrc ?? resolvedFallback
 
   const handleError = () => {
     if (!srcError) {

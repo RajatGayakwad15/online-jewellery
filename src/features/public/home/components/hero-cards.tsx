@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import Link from 'next/link'
 import {
   BicepsFlexed,
   CircleCheck,
@@ -99,7 +99,7 @@ export const HeroCards = () => {
         </CardHeader>
 
         <CardContent>
-          <Link to='/products' className={`w-full ${buttonVariants()}`}>
+          <Link href='/products' className={`w-full ${buttonVariants()}`}>
             View Chairs
           </Link>
         </CardContent>
@@ -120,7 +120,7 @@ export const HeroCards = () => {
         </CardFooter>
       </Card>
 
-      <Link to={'/'}>
+      <Link href='/'>
         <Card className='group absolute -right-[10px] bottom-[15px] h-[180px] w-[350px] overflow-hidden shadow-black/10 drop-shadow-xl dark:shadow-white/10'>
           <Image
             src={Img3}

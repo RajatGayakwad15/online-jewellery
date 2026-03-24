@@ -1,5 +1,7 @@
+'use client'
+
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { Tag } from 'lucide-react'
 import { apiClient } from '@/lib/apiClient'
@@ -37,7 +39,7 @@ type Category = {
 }
 
 export default function CategoriesPage() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
@@ -92,7 +94,7 @@ export default function CategoriesPage() {
             <p className='text-muted-foreground'>Add and manage product categories</p>
           </div>
           <div className='flex items-center gap-2'>
-            <Button onClick={() => navigate({ to: '/admin/categories/add' })}>
+            <Button onClick={() => router.push('/admin/categories/add')}>
               Add Category
             </Button>
           </div>

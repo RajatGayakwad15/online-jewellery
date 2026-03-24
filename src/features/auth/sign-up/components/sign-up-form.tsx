@@ -1,3 +1,5 @@
+'use client'
+
 import { HTMLAttributes, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -17,7 +19,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
 import { apiClient } from '@/lib/apiClient'
-import { useNavigate } from '@tanstack/react-router'
+import { useRouter } from 'next/navigation'
 
 type SignUpFormProps = HTMLAttributes<HTMLFormElement>
 
@@ -50,7 +52,7 @@ const formSchema = z
 
 export function SignUpForm({ className, ...props }: SignUpFormProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate()
+  const router = useRouter()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -74,7 +76,7 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
       })
 
       toast.success('Account created successfully!')
-      navigate({ to: '/sign-in' })
+      router.push('/sign-in')
     } catch (err: any) {
       const msg = err?.response?.data?.title ?? 'Failed to create account.'
       toast.error(String(msg))

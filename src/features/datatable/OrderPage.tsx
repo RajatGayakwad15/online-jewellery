@@ -1,3 +1,5 @@
+'use client'
+
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ColumnDef } from '@tanstack/react-table'
 import { Edit, Trash } from 'lucide-react'
@@ -12,7 +14,7 @@ import {
 } from '@/components/ui/alert-dialog.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import { DataTable } from './DataTable.tsx'
-import { useNavigate } from '@tanstack/react-router'
+import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { apiClient } from '@/lib/apiClient'
 
@@ -77,7 +79,7 @@ function mapOrderToRow(o: OrderApi): OrderRow {
 }
 
 export default function OrderPage() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [orders, setOrders] = useState<OrderRow[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -101,12 +103,9 @@ export default function OrderPage() {
 
   const handleRowNavigate = useCallback(
     (row: OrderRow) => {
-      navigate({
-        to: '/admin/order/$id',
-        params: { id: row.id },
-      })
+      router.push(`/admin/order/${row.id}`)
     },
-    [navigate]
+    [router]
   )
 
   const columns: ColumnDef<OrderRow>[] = useMemo(
@@ -168,10 +167,7 @@ export default function OrderPage() {
                 className='h-8 w-8 cursor-pointer p-0'
                 onClick={(e) => {
                   e.stopPropagation()
-                  navigate({
-                    to: '/admin/order/update/$id',
-                    params: { id: row.original.id },
-                  })
+                  router.push(`/admin/order/update/${row.original.id}`)
                 }}
               >
                 <Edit size={16} />
@@ -234,7 +230,7 @@ export default function OrderPage() {
         ),
       },
     ],
-    [fetchOrders, navigate]
+    [fetchOrders, router]
   )
 
   return (

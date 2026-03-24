@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
 import image from "@/assets/extra imges/sets.webp";
 import neklase1 from "@/assets/extra imges/neklase.jpg";
@@ -65,7 +67,9 @@ const Carousel = () => {
         {carouselData.map((item, index) => (
           <img
             key={index}
-            src={item.image}
+            src={
+              typeof item.image === 'string' ? item.image : item.image.src
+            }
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
               index === currentIndex ? "opacity-100" : "opacity-0"
             }`}

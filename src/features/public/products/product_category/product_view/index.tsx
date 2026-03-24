@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 // import * as React from 'react'
 // import toast from 'react-hot-toast'
@@ -7,7 +9,7 @@ import support from '@/assets/icons/customer-support.png'
 import Warranty from '@/assets/icons/guarantee.png'
 import trophy from '@/assets/icons/trophy 1.png'
 import { apiClient } from '@/lib/apiClient'
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { useParams, useRouter } from 'next/navigation'
 // UI components
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -15,17 +17,17 @@ import MainImage from './components/main-image'
 
 const features = [
   {
-    icon: trophy, // use an icon that fits
+    icon: trophy.src,
     title: "Premium Quality",
     description: "Crafted with genuine diamonds & gold",
   },
   {
-    icon: Warranty,
+    icon: Warranty.src,
     title: "Authenticity Guarantee",
     description: "Certified by leading gem labs",
   },
   {
-    icon: support,
+    icon: support.src,
     title: "Lifetime Service",
     description: "Free cleaning & polishing",
   },
@@ -33,10 +35,9 @@ const features = [
 
 
 const ProductView = () => {
-  const { category, id } = useParams({ strict: false }) as {
-    category?: string
-    id: string
-  }
+  const params = useParams()
+  const category = params.category as string | undefined
+  const id = params.id as string
 
   type FieldItem = {
     title: string
@@ -60,7 +61,7 @@ const ProductView = () => {
   const [productDetails, setProductDetails] = useState<Product | null>(null)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
-  const navigate = useNavigate()
+  const router = useRouter()
 
   useEffect(() => {
     let isMounted = true
@@ -122,13 +123,7 @@ const ProductView = () => {
   }
 
 const handleBuyNow = (product: Product) => {
-  navigate({
-    to: '/products/$category/$id/order',
-    params: {
-      category: category ?? '',
-      id: String(product.id),
-    },
-  })
+  router.push(`/products/${category ?? ''}/${String(product.id)}/order`)
 }
 
   return (

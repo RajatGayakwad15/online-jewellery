@@ -1,6 +1,7 @@
+'use client'
+
 import React, { useEffect, useState } from 'react'
-// import Cookies from 'js-cookie'
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { useParams, useRouter } from 'next/navigation'
 import { Formik, Form, Field } from 'formik'
 // import { jwtDecode } from 'jwt-decode'
 import { EyeIcon } from 'lucide-react'
@@ -33,14 +34,14 @@ const BuyNow: React.FC<BuyNowProps> = () => {
 //   const [quantity, setQuantity] = useState(1)
 const quantity = 1
 
-  const navigate = useNavigate()
+  const router = useRouter()
   const token = useAuthStore((s) => s.auth.accessToken)
 //   const authTokenChk = Cookies.get('authToken')
 //   const [step, setStep] = useState(authTokenChk ? 2 : 1)
 const [step, setStep] = useState(token ? 2 : 1)
 
 
-  const { category, id } = useParams({ strict: false })
+  const { category, id } = useParams()
   console.log('slug', id, category)
   const [username, setUsername] = useState<string>('')
   const [password, setPassword] = useState<string>('')
@@ -145,7 +146,7 @@ const [step, setStep] = useState(token ? 2 : 1)
 
   const handleRegisterClick = () => {
     if (!token) {
-      navigate({ to: '/sign-in' })
+      router.push('/sign-in')
       return
     }
     setStep(2)
@@ -153,7 +154,7 @@ const [step, setStep] = useState(token ? 2 : 1)
 
   const handlePlaceOrder = async (values: any) => {
     if (!token) {
-      navigate({ to: '/sign-in' })
+      router.push('/sign-in')
       return
     }
 
@@ -183,7 +184,7 @@ const [step, setStep] = useState(token ? 2 : 1)
     try {
       await apiClient.post('/orders', payload)
       toast.success('🎉 Order placed successfully!')
-      navigate({ to: '/' })
+      router.push('/')
     } catch {
       toast.error('Failed to place order. Please try again.')
     }

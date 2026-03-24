@@ -1,4 +1,5 @@
-import { Outlet } from '@tanstack/react-router'
+'use client'
+
 import {
   IconBrowserCheck,
   IconNotification,
@@ -14,10 +15,9 @@ import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import SidebarNav from './components/sidebar-nav'
 
-export default function Settings() {
+export default function Settings({ children }: { children?: React.ReactNode }) {
   return (
     <>
-      {/* ===== Top Heading ===== */}
       <Header>
         <Search />
         <div className='ml-auto flex items-center space-x-4'>
@@ -41,7 +41,7 @@ export default function Settings() {
             <SidebarNav items={sidebarNavItems} />
           </aside>
           <div className='flex w-full overflow-y-hidden p-1'>
-            <Outlet />
+            {children}
           </div>
         </div>
       </Main>
@@ -53,26 +53,26 @@ const sidebarNavItems = [
   {
     title: 'Profile',
     icon: <IconUser size={18} />,
-    href: '/settings',
+    href: '/admin/settings',
   },
   {
     title: 'Account',
     icon: <IconTool size={18} />,
-    href: '/settings/account',
+    href: '/admin/settings/account',
   },
   {
     title: 'Appearance',
     icon: <IconPalette size={18} />,
-    href: '/settings/appearance',
+    href: '/admin/settings/appearance',
   },
   {
     title: 'Notifications',
     icon: <IconNotification size={18} />,
-    href: '/settings/notifications',
+    href: '/admin/settings/notifications',
   },
   {
     title: 'Display',
     icon: <IconBrowserCheck size={18} />,
-    href: '/settings/display',
+    href: '/admin/settings/display',
   },
 ]

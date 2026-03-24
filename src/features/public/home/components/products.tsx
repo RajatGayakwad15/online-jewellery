@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import Link from 'next/link'
 import p2 from '@/assets/extra imges/neklase3.webp'
 import p3 from '@/assets/products/anklet.webp'
 import p7 from '@/assets/products/bangles.webp'
@@ -43,7 +43,7 @@ export const Products = () => {
 
       <div className='grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4'>
         {products.map(({ title, image, category }) => (
-          <Link to={`/products/${category}` as any} key={title}>
+          <Link href={`/products/${category}`} key={title}>
             <div className='group relative flex h-60 cursor-pointer items-end justify-center overflow-hidden rounded-3xl bg-gradient-to-t from-black/60 to-transparent shadow-lg'>
               <Image
                 src={image}

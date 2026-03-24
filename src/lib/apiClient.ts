@@ -2,8 +2,8 @@ import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
 
 const baseURL =
-  (import.meta.env.VITE_APP_API_URL as string | undefined)?.trim() ||
-  'http://localhost:4000/api'
+  (process.env.NEXT_PUBLIC_APP_API_URL as string | undefined)?.trim() ||
+  '/api'
 
 export const apiClient = axios.create({
   baseURL,

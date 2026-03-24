@@ -1,7 +1,9 @@
+'use client'
+
 import { useMemo, useState } from 'react'
 import type React from 'react'
 import toast from 'react-hot-toast'
-import { useNavigate } from '@tanstack/react-router'
+import { useRouter } from 'next/navigation'
 import { Formik, Form, Field } from 'formik'
 
 import { Header } from '@/components/layout/header'
@@ -24,7 +26,7 @@ function slugify(value: string) {
 }
 
 export default function AddCategoryPage() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [autoSlug, setAutoSlug] = useState(true)
 
   const initialValues = useMemo(
@@ -50,7 +52,7 @@ export default function AddCategoryPage() {
             <h2 className='text-2xl font-bold tracking-tight'>Add Category</h2>
             <p className='text-muted-foreground'>Create category for product listing</p>
           </div>
-          <Button variant='outline' onClick={() => navigate({ to: '/admin/categories' })}>
+          <Button variant='outline' onClick={() => router.push('/admin/categories')}>
             Back
           </Button>
         </div>
@@ -71,7 +73,7 @@ export default function AddCategoryPage() {
                     slug: values.slug,
                   })
                   toast.success('Category added')
-                  navigate({ to: '/admin/categories' })
+                  router.push('/admin/categories')
                 } catch {
                   toast.error('Failed to add category. Try again.')
                 } finally {

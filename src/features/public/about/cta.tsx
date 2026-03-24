@@ -1,13 +1,14 @@
+"use client";
+
 import React from "react";
 import stacks from "@/assets/extra imges/jwellaryset.jpeg";
-import { useNavigate } from "@tanstack/react-router";
-// import { useNavigate } from "react-router";
+import { useRouter } from "next/navigation";
 
 const CTA: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleClick = (): void => {
-    navigate({ to: "/products" });
+    router.push("/products");
   };
 
   return (
@@ -68,7 +69,7 @@ const CTA: React.FC = () => {
           <div className="absolute h-full right-0 opacity-20 md:opacity-40 lg:opacity-100 blur-0 lg:blur-0 ">
             <img
               loading="lazy"
-              src={stacks}
+              src={typeof stacks === 'string' ? stacks : stacks.src}
               alt="stack"
               className="h-full w-full object-cover bg-left"
             />

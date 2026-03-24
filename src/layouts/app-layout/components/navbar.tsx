@@ -1,5 +1,8 @@
+'use client'
+
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useNavigate } from '@tanstack/react-router'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Menu } from 'lucide-react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
@@ -52,7 +55,7 @@ function initialsFromProfile(name: string | undefined, email: string | undefined
 }
 
 function AuthMenu({ variant }: { variant: 'desktop' | 'mobile' }) {
-  const navigate = useNavigate()
+  const router = useRouter()
   const token = useAuthStore((s) => s.auth.accessToken)
   const reset = useAuthStore((s) => s.auth.reset)
   const [displayName, setDisplayName] = useState('')
@@ -94,12 +97,12 @@ function AuthMenu({ variant }: { variant: 'desktop' | 'mobile' }) {
 
   const logout = () => {
     reset()
-    navigate({ to: '/sign-in' })
+    router.push('/sign-in')
   }
 
   if (!token) {
     return (
-      <Link to='/sign-in' className={buttonVariants()}>
+      <Link href='/sign-in' className={buttonVariants()}>
         Login
       </Link>
     )
@@ -138,7 +141,7 @@ function AuthMenu({ variant }: { variant: 'desktop' | 'mobile' }) {
         <DropdownMenuSeparator />
         {role === 'admin' ? (
           <DropdownMenuItem asChild className='cursor-pointer'>
-            <Link to='/admin'>Admin dashboard</Link>
+            <Link href='/admin'>Admin dashboard</Link>
           </DropdownMenuItem>
         ) : null}
         <DropdownMenuItem className='cursor-pointer' onSelect={logout}>
@@ -157,7 +160,7 @@ export const Navbar = () => {
       <NavigationMenu className='mx-auto'>
         <NavigationMenuList className='container flex h-14 w-screen items-center justify-between px-4'>
           <NavigationMenuItem>
-            <Link to='/' className='ml-2 flex items-center text-xl font-bold'>
+            <Link href='/' className='ml-2 flex items-center text-xl font-bold'>
               Glossary
             </Link>
           </NavigationMenuItem>
@@ -175,7 +178,7 @@ export const Navbar = () => {
               >
                 <SheetTitle>
                   <Link
-                    to='/'
+                    href='/'
                     className='mt-4 ml-2 flex items-center text-xl font-bold'
                     onClick={() => setIsOpen(false)}
                   >
@@ -187,7 +190,7 @@ export const Navbar = () => {
                   {routeList.map(({ href, label }) => (
                     <Link
                       key={label}
-                      to={href}
+                      href={href}
                       onClick={() => setIsOpen(false)}
                       className={buttonVariants({ variant: 'ghost' })}
                     >
@@ -209,20 +212,10 @@ export const Navbar = () => {
             {routeList.map(({ href, label }) => (
               <Link
                 key={label}
-                to={href}
+                href={href}
                 className='hover:text-accent-foreground hover:bg-primary/5 relative rounded-lg px-5 py-2 text-sm font-medium transition-all'
-                activeProps={{
-                  className: 'text-accent-foreground',
-                }}
               >
-                {({ isActive }) => (
-                  <>
-                    {label}
-                    <span
-                      className={`from-accent-foreground to-primary absolute bottom-0 left-0 block h-0.5 w-full rounded bg-gradient-to-r transition-transform duration-300 ${isActive ? 'scale-x-75' : 'scale-x-0'} `}
-                    />
-                  </>
-                )}
+                {label}
               </Link>
             ))}
           </nav>

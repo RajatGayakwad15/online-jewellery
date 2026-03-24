@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/card'
 import AuthLayout from '../auth-layout'
 import { UserAuthForm } from './components/user-auth-form'
-import { Link } from '@tanstack/react-router'
+import Link from 'next/link'
 
 export default function SignIn() {
   return (
@@ -28,7 +28,7 @@ export default function SignIn() {
           <div className='flex justify-between items-center w-full'>
          
            <Link
-                to='/forgot-password'
+                href='/forgot-password'
                 className='text-muted-foreground  text-sm font-medium hover:text-primary'
               >
                 Forgot password?

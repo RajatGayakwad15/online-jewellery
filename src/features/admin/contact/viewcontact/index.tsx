@@ -1,5 +1,7 @@
+'use client'
+
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { useParams, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { Contact, MessageCircle, LoaderCircle, Trash2, FileText } from 'lucide-react'
 
@@ -32,8 +34,9 @@ type ContactRow = {
 }
 
 export default function ViewContact() {
-  const navigate = useNavigate()
-  const { id } = useParams({ strict: false }) as { id: string }
+  const router = useRouter()
+  const params = useParams()
+  const id = params.id as string
 
   const [contact, setContact] = useState<ContactRow | null>(null)
   const [loading, setLoading] = useState(true)
@@ -72,7 +75,7 @@ export default function ViewContact() {
       setIsDeleting(true)
       await apiClient.delete(`/contacts/${id}`)
       toast.success('Contact deleted')
-      navigate({ to: '/admin/contact' })
+      router.push('/admin/contact')
     } catch {
       toast.error('Failed to delete contact')
     } finally {

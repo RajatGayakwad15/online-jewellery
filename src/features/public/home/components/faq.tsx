@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import Link from 'next/link'
 import {
   Accordion,
   AccordionContent,
@@ -70,7 +70,7 @@ export const FAQ = () => {
         Still have questions?{' '}
         <Link
           rel='noreferrer noopener'
-          to='/contact'
+          href='/contact'
           className='text-primary border-primary transition-all hover:border-b-2'
         >
           Contact us

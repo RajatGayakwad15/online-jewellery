@@ -1,3 +1,5 @@
+'use client'
+
 import { TruckIcon, RulerIcon, HandshakeIcon } from 'lucide-react'
 import serviceImg from '@/assets/jwellaryset-removebg-preview.png'
 import {
@@ -80,7 +82,7 @@ export const Service = () => {
 
           <div className='relative'>
             <img
-              src={serviceImg}
+              src={serviceImg.src}
               className='z-10 w-[300px] object-contain md:w-[500px] lg:w-[600px]'
               alt='Kumthekar Furniture Services'
             />

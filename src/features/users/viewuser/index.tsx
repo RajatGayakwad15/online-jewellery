@@ -1,5 +1,7 @@
+'use client'
+
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { useParams, useRouter } from 'next/navigation'
 import { LoaderCircle, Trash2, User } from 'lucide-react'
 import { toast } from 'sonner'
 import {
@@ -30,8 +32,9 @@ type UserDoc = {
 }
 
 const ViewUser = () => {
-  const navigate = useNavigate()
-  const { id } = useParams({ strict: false }) as { id: string }
+  const router = useRouter()
+  const params = useParams()
+  const id = params.id as string
 
   const [user, setUser] = useState<UserDoc | null>(null)
   const [loading, setLoading] = useState(true)
@@ -68,7 +71,7 @@ const ViewUser = () => {
       setIsDeleting(true)
       await apiClient.delete(`/users/${id}`)
       toast.success('User deleted')
-      navigate({ to: '/admin/users' })
+      router.push('/admin/users')
     } catch {
       toast.error('Failed to delete user')
     } finally {

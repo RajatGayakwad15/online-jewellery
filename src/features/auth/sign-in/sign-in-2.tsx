@@ -1,3 +1,5 @@
+'use client'
+
 import ViteLogo from '@/assets/vite.svg'
 import { UserAuthForm } from './components/user-auth-form'
 
@@ -23,7 +25,7 @@ export default function SignIn2() {
         </div> */}
 
         <img
-          src={ViteLogo}
+          src={typeof ViteLogo === 'string' ? ViteLogo : ViteLogo.src}
           className='relative m-auto'
           width={301}
           height={60}

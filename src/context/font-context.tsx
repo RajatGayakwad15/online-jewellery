@@ -1,3 +1,5 @@
+'use client'
+
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { fonts } from '@/config/fonts'
 
@@ -14,6 +16,7 @@ export const FontProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [font, _setFont] = useState<Font>(() => {
+    if (typeof window === 'undefined') return fonts[0]
     const savedFont = localStorage.getItem('font')
     return fonts.includes(savedFont as Font) ? (savedFont as Font) : fonts[0]
   })
@@ -31,14 +34,15 @@ export const FontProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [font])
 
   const setFont = (font: Font) => {
-    localStorage.setItem('font', font)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('font', font)
+    }
     _setFont(font)
   }
 
   return <FontContext value={{ font, setFont }}>{children}</FontContext>
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const useFont = () => {
   const context = useContext(FontContext)
   if (!context) {
