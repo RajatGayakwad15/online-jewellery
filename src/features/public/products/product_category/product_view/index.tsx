@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 // import * as React from 'react'
 // import toast from 'react-hot-toast'
 // import ReactImageMagnify from 'react-image-magnify'
@@ -6,47 +6,12 @@ import { useState, useEffect } from 'react'
 import support from '@/assets/icons/customer-support.png'
 import Warranty from '@/assets/icons/guarantee.png'
 import trophy from '@/assets/icons/trophy 1.png'
-import Img1 from '@/assets/neklase2.jpg'
-import p1 from '@/assets/neklase3.webp'
-import p2 from '@/assets/products/anklet.webp'
-import p3 from '@/assets/products/noserings.webp'
-import { useNavigate } from '@tanstack/react-router'
+import { apiClient } from '@/lib/apiClient'
+import { useNavigate, useParams } from '@tanstack/react-router'
 // UI components
 import { Button } from '@/components/ui/button'
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel'
 import { Skeleton } from '@/components/ui/skeleton'
 import MainImage from './components/main-image'
-
-// Dummy Data
-const dummyProduct = {
-  id: 1,
-  name: "Diamond Necklace",
-  brand: "SparkleJewel",
-  actual_price: 120000,
-  discount_price: 89999,
-  information: "An exquisite diamond necklace crafted with precision and elegance.",
-  cart_status: false,
-  images: [p1, p2, p3], // replace with your jewelry images
-  common_fields: [
-    JSON.stringify([{ title: "Material", info: "18K Gold" }]),
-    JSON.stringify([{ title: "Stone", info: "Natural Diamonds" }]),
-  ],
-  product_details: [
-    JSON.stringify([{ title: "Occasion", info: "Wedding / Party Wear" }]),
-  ],
-  dimensions_details: [
-    JSON.stringify([{ title: "Length", info: "18 inches" }]),
-    JSON.stringify([{ title: "Weight", info: "22 grams" }]),
-  ],
-  warranty: [JSON.stringify([{ title: "Certification", info: "IGI Certified" }])],
-};
-
 
 const features = [
   {
@@ -66,49 +31,59 @@ const features = [
   },
 ];
 
-const similarProducts = [
-  { id: 2, title: "Gold Earrings", price: "₹45,000", image: Img1 },
-  { id: 3, title: "Diamond Ring", price: "₹65,000", image: p1 },
-  { id: 4, title: "Pearl Bracelet", price: "₹25,000", image: p2 },
-];
-
 
 const ProductView = () => {
-
-  type Product = {
-    id: number;
-    name: string;
-    brand: string;
-    actual_price: number;
-    discount_price: number;
-    information: string;
-    cart_status: boolean;
-    images: string[];
-    common_fields: string[];
-    product_details: string[];
-    dimensions_details: string[];
-    warranty: string[];
-  };
+  const { category, id } = useParams({ strict: false }) as {
+    category?: string
+    id: string
+  }
 
   type FieldItem = {
-    title: string;
-    info: string;
-  };
+    title: string
+    info: string
+  }
 
-  // 2. Initialize state with the correct type
-  const [productDetails, setProductDetails] = useState<Product | null>(null);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  type Product = {
+    id: string
+    name: string
+    brand: string
+    actual_price: number
+    discount_price: number | null
+    information: string
+    images: string[]
+    common_fields: FieldItem[]
+    product_details: FieldItem[]
+    dimensions_details: FieldItem[]
+    warranty: FieldItem[]
+  }
+
+  const [productDetails, setProductDetails] = useState<Product | null>(null)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
-  // 3. useEffect to simulate loading
   useEffect(() => {
-    setTimeout(() => {
-      setProductDetails(dummyProduct);
-      setSelectedImage(dummyProduct.images[0]);
-      setLoading(false);
-    }, 1000);
-  }, []);
+    let isMounted = true
+
+    async function loadProduct() {
+      setLoading(true)
+      try {
+        const res = await apiClient.get(`/products/${id}`)
+        const product = res.data?.data as Product | undefined
+        if (!isMounted) return
+        setProductDetails(product ?? null)
+        setSelectedImage(product?.images?.[0] ?? null)
+      } finally {
+        if (isMounted) setLoading(false)
+      }
+    }
+
+    if (id) loadProduct().catch(() => {})
+
+    return () => {
+      isMounted = false
+    }
+  }, [id])
   // const [productDetails, setProductDetails] = useState(null)
   // const [selectedImage, setSelectedImage] = useState(null)
   // const [loading, setLoading] = useState(true)
@@ -146,12 +121,12 @@ const ProductView = () => {
     return <div className='mt-20 text-center text-xl'>Product Not Found</div>
   }
 
-const handleBuyNow = (product:any) => {
+const handleBuyNow = (product: Product) => {
   navigate({
     to: '/products/$category/$id/order',
     params: {
-      category: product.brand ?? '',
-      id: String(product.id ?? ''),
+      category: category ?? '',
+      id: String(product.id),
     },
   })
 }
@@ -220,8 +195,10 @@ const handleBuyNow = (product:any) => {
           </p>
 
           <div className='text-2xl font-bold'>
-            ₹{productDetails.discount_price || productDetails.actual_price}
-            {productDetails.discount_price && (
+            ₹{productDetails.discount_price ?? productDetails.actual_price}
+            {productDetails.discount_price !== null &&
+              productDetails.discount_price !== undefined &&
+              productDetails.discount_price !== productDetails.actual_price && (
               <span className='ml-2 text-gray-500 line-through'>
                 ₹{productDetails.actual_price}
               </span>
@@ -247,50 +224,17 @@ const handleBuyNow = (product:any) => {
           <div className='mt-6'>
             <h3 className='text-xl font-semibold'>General</h3>
             <ul>
-              {productDetails.common_fields.map((field, idx) => {
-                let parsed = []
-                try {
-                  parsed = JSON.parse(field)
-                } catch { }
-                return parsed.map((d: FieldItem, i: number) => (
-                  <li
-                    key={`${idx}-${i}`}
-                    className='flex justify-between border-b py-1'
-                  >
-                    <span>{d.title}</span>
-                    <span className='font-medium'>{d.info}</span>
-                  </li>
-                ))
-              })}
+              {productDetails.common_fields.map((d: FieldItem, idx) => (
+                <li key={idx} className='flex justify-between border-b py-1'>
+                  <span>{d.title}</span>
+                  <span className='font-medium'>{d.info}</span>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Similar Products */}
-
         </div>
 
-      </div>
-      <div className=' p-15 mx-auto lg:w-[1200px]'>
-        <h3 className='mb-4 text-2xl font-bold'>Similar Products</h3>
-        <Carousel>
-          <CarouselContent>
-            {similarProducts.map((p) => (
-              <CarouselItem key={p.id} className='w-[250px] flex-none'>
-                <div className='rounded-lg p-3 shadow-md'>
-                  <img
-                    src={p.image}
-                    alt={p.title}
-                    className='h-40 w-full rounded object-cover'
-                  />
-                  <p className='mt-2 font-semibold'>{p.title}</p>
-                  <p className='text-gray-700'>{p.price}</p>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
       </div>
     </>
   )

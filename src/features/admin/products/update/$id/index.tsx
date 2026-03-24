@@ -30,9 +30,9 @@
 
 // export default UpdateProduct
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 // import { useMutation, useQuery } from '@tanstack/react-query'
-// import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useParams } from '@tanstack/react-router'
 import {
   Formik,
   FieldArray,
@@ -53,6 +53,8 @@ import { Header } from '@/components/layout/header'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 // import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { apiClient } from '@/lib/apiClient'
+import { isAxiosError } from 'axios'
 // import { UpdateProduct } from '../../../../api/admin/products.jsx'
 
 // const furnitureCategories = [
@@ -115,9 +117,8 @@ const initialValues = {
 // })
 
 const validationSchema = Yup.object().shape({
-  images: Yup.array()
-    .min(1, 'At least one image is required')
-    .required('Product images are required'),
+  // Images are optional on update; you can keep existing images.
+  images: Yup.array(),
   name: Yup.string().required('Product name is required'),
   brand: Yup.string().required('Brand is required'),
   actualPrice: Yup.number()
@@ -239,7 +240,60 @@ const UpdateProduct = () => {
   const [activeTab, setActiveTab] = useState('General')
   const currentIndex = tabs.indexOf(activeTab)
   const isLastTab = currentIndex === tabs.length - 1
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
+  const { id } = useParams({ strict: false }) as { id: string }
+
+  type Category = {
+    id: string
+    slug: string
+    name: string
+  }
+
+  const [categories, setCategories] = useState<Category[]>([])
+  const [formInitialValues, setFormInitialValues] =
+    useState<ProductFormValues>(initialValues)
+
+  useEffect(() => {
+    let isMounted = true
+
+    async function load() {
+      const [catRes, prodRes] = await Promise.allSettled([
+        apiClient.get('/categories'),
+        apiClient.get(`/products/${id}`),
+      ])
+
+      if (!isMounted) return
+
+      setCategories(
+        catRes.status === 'fulfilled' ? catRes.value.data?.data ?? [] : []
+      )
+
+      if (prodRes.status === 'fulfilled') {
+        const p = prodRes.value.data?.data
+        if (p) {
+          setFormInitialValues({
+            images: [],
+            name: p.name ?? '',
+            brand: p.brand ?? '',
+            actualPrice: p.actual_price ?? '',
+            discountPrice: p.discount_price ?? '',
+            information: p.information ?? '',
+            categorySlug: p.categorySlug ?? '',
+            commonFields: p.common_fields ?? [{ title: '', info: '' }],
+            productDetails: p.product_details ?? [{ title: '', info: '' }],
+            dimensions: p.dimensions_details ?? [{ title: '', info: '' }],
+            warranty: p.warranty ?? [{ title: '', info: '' }],
+          })
+        }
+      }
+    }
+
+    load().catch(() => {})
+
+    return () => {
+      isMounted = false
+    }
+  }, [id])
 
   // const { mutate: product, isPending } = useMutation({
   //   mutationKey: ['add-product'],
@@ -359,11 +413,11 @@ const UpdateProduct = () => {
                 className='w-full rounded border p-2'
               >
                 <option value='' className='bg-accent'>-- Choose Category --</option>
-                {/* {getProduct?.data?.Category.map((cat) => (
-                  <option key={cat.slug} value={cat.id} className='bg-accent'>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.slug} className='bg-accent'>
                     {cat.name}
                   </option>
-                ))} */}
+                ))}
               </Field>
             </div>
             <div className='col-span-2'>
@@ -403,11 +457,48 @@ const UpdateProduct = () => {
           <CardContent className='p-6'>
             <h1 className='mb-4 text-2xl font-bold'>Update Product</h1>
             <Formik
-              initialValues={initialValues}
+              initialValues={formInitialValues}
               validationSchema={validationSchema}
-              onSubmit={(values) => {
-                console.log(values)
-                // if (isLastTab) product(values)
+              enableReinitialize
+              onSubmit={async (values) => {
+                try {
+                  const formData = new FormData()
+
+                  ;(values.images || []).forEach((file) => {
+                    formData.append('images', file)
+                  })
+
+                  formData.append('categorySlug', values.categorySlug)
+                  formData.append('name', values.name)
+                  formData.append('brand', values.brand)
+                  formData.append('actualPrice', String(values.actualPrice))
+                  formData.append(
+                    'discountPrice',
+                    values.discountPrice === '' ? '' : String(values.discountPrice)
+                  )
+                  formData.append('information', values.information || '')
+
+                  formData.append('commonFields', JSON.stringify(values.commonFields))
+                  formData.append(
+                    'productDetails',
+                    JSON.stringify(values.productDetails)
+                  )
+                  formData.append('dimensions', JSON.stringify(values.dimensions))
+                  formData.append('warranty', JSON.stringify(values.warranty))
+
+                  await apiClient.put(`/products/${id}`, formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                  })
+
+                  toast.success('Product updated successfully!')
+                  navigate({ to: '/admin/products' })
+                } catch (err) {
+                  const msg =
+                    isAxiosError(err) && err.response?.data?.title
+                      ? String(err.response.data.title)
+                      : 'Failed to update product. Please try again.'
+                  toast.error(msg)
+                }
               }}
             >
               {({ values, validateForm, errors, touched }) => (

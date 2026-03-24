@@ -19,6 +19,7 @@
     "start": "vite --mode default",
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "backend": "node server/index.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "format:check": "prettier --check .",

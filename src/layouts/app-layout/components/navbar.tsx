@@ -1,8 +1,7 @@
-import { useState } from 'react'
-import { Link } from '@tanstack/react-router'
-// import { Link } from '@tanstack/react-router'
+import { useEffect, useMemo, useState } from 'react'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { Menu } from 'lucide-react'
-import {  buttonVariants } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -14,10 +13,18 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-// import Image from '@/components/image'
 import { ThemeSwitch } from '@/components/theme-switch'
-
-// import Logo from '/images/logo.png'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { apiClient } from '@/lib/apiClient'
+import { useAuthStore } from '@/stores/authStore'
 
 interface RouteProps {
   href: string
@@ -31,6 +38,117 @@ const routeList: RouteProps[] = [
   { href: '/contact', label: 'Contact' },
 ]
 
+function initialsFromProfile(name: string | undefined, email: string | undefined) {
+  const n = (name || '').trim()
+  if (n.length > 0) {
+    const parts = n.split(/\s+/).filter(Boolean)
+    if (parts.length >= 2)
+      return `${parts[0][0] ?? ''}${parts[1][0] ?? ''}`.toUpperCase().slice(0, 2)
+    return (parts[0][0] ?? '?').toUpperCase()
+  }
+  const e = (email || '').trim()
+  if (e.length > 0) return e.charAt(0).toUpperCase()
+  return '?'
+}
+
+function AuthMenu({ variant }: { variant: 'desktop' | 'mobile' }) {
+  const navigate = useNavigate()
+  const token = useAuthStore((s) => s.auth.accessToken)
+  const reset = useAuthStore((s) => s.auth.reset)
+  const [displayName, setDisplayName] = useState('')
+  const [email, setEmail] = useState('')
+  const [role, setRole] = useState<string | undefined>()
+
+  useEffect(() => {
+    if (!token) {
+      setDisplayName('')
+      setEmail('')
+      setRole(undefined)
+      return
+    }
+    let mounted = true
+    apiClient
+      .get('/auth/me', { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => {
+        if (!mounted) return
+        const me = res.data?.data
+        setDisplayName(typeof me?.name === 'string' ? me.name : '')
+        setEmail(typeof me?.email === 'string' ? me.email : '')
+        setRole(typeof me?.role === 'string' ? me.role : undefined)
+      })
+      .catch(() => {
+        if (!mounted) return
+        setDisplayName('')
+        setEmail('')
+        setRole(undefined)
+      })
+    return () => {
+      mounted = false
+    }
+  }, [token])
+
+  const letter = useMemo(
+    () => initialsFromProfile(displayName, email),
+    [displayName, email]
+  )
+
+  const logout = () => {
+    reset()
+    navigate({ to: '/sign-in' })
+  }
+
+  if (!token) {
+    return (
+      <Link to='/sign-in' className={buttonVariants()}>
+        Login
+      </Link>
+    )
+  }
+
+  return (
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant='ghost'
+          type='button'
+          className={
+            variant === 'mobile'
+              ? 'mt-2 h-10 w-10 shrink-0 rounded-full p-0'
+              : 'relative h-9 w-9 rounded-full p-0'
+          }
+          aria-label='Account menu'
+        >
+          <Avatar className='h-9 w-9 border border-border'>
+            <AvatarImage src={undefined} alt='' />
+            <AvatarFallback className='text-sm font-semibold'>{letter}</AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className='w-56' align='end'>
+        <DropdownMenuLabel className='font-normal'>
+          <div className='flex flex-col space-y-1'>
+            <p className='text-sm leading-none font-medium'>
+              {displayName || email || 'Account'}
+            </p>
+            {email ? (
+              <p className='text-muted-foreground text-xs leading-none'>{email}</p>
+            ) : null}
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {role === 'admin' ? (
+          <DropdownMenuItem asChild className='cursor-pointer'>
+            <Link to='/admin'>Admin dashboard</Link>
+          </DropdownMenuItem>
+        ) : null}
+        <DropdownMenuItem className='cursor-pointer' onSelect={logout}>
+          Log out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
@@ -38,15 +156,12 @@ export const Navbar = () => {
     <header className='dark:bg-background/50 sticky top-0 z-40 w-full border-b-[1px] border-black/10 bg-white/50 backdrop-blur-md dark:border-white/10'>
       <NavigationMenu className='mx-auto'>
         <NavigationMenuList className='container flex h-14 w-screen items-center justify-between px-4'>
-          {/* Brand Logo */}
           <NavigationMenuItem>
             <Link to='/' className='ml-2 flex items-center text-xl font-bold'>
-              {/* <Image src={Logo} alt='logo' className='w-52 dark:invert' /> */}
               Glossary
             </Link>
           </NavigationMenuItem>
 
-          {/* Mobile */}
           <span className='flex items-center gap-2 md:hidden'>
             <ThemeSwitch />
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -62,8 +177,8 @@ export const Navbar = () => {
                   <Link
                     to='/'
                     className='mt-4 ml-2 flex items-center text-xl font-bold'
+                    onClick={() => setIsOpen(false)}
                   >
-                    {/* <Image src='' alt='logo' className='w-40 dark:invert' /> */}
                     Glossary
                   </Link>
                 </SheetTitle>
@@ -80,19 +195,12 @@ export const Navbar = () => {
                     </Link>
                   ))}
                 </nav>
-                {/* <Button
-                  // onClick={() => setIsOpen(false)}
-                  className='mt-2 w-[35%]'
+                <div
+                  className='mt-4 flex justify-center'
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  Login
-                </Button> */}
-                <Link
-                  to='/admin'
-                  onClick={() => setIsOpen(false)}
-                  className={`mt-2 w-[35%] ${buttonVariants()}`}
-                >
-                  Login
-                </Link>
+                  <AuthMenu variant='mobile' />
+                </div>
               </SheetContent>
             </Sheet>
           </span>
@@ -119,16 +227,9 @@ export const Navbar = () => {
             ))}
           </nav>
 
-          {/* Right-side actions */}
           <div className='hidden items-center gap-3 md:flex'>
-            {/* <Button variant={'outline'}>
-              <ShoppingCart className='mr-1 h-5 w-5' />
-              Cart
-            </Button> */}
             <ThemeSwitch />
-           <Link to='/admin' onClick={() => setIsOpen(false)} className={` ${buttonVariants()}`}>
-         Login
-        </Link>
+            <AuthMenu variant='desktop' />
           </div>
         </NavigationMenuList>
       </NavigationMenu>

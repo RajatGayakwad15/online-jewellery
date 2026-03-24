@@ -19,7 +19,7 @@ import {
   // IconUserOff,
   IconUsers,
 } from '@tabler/icons-react'
-import { AudioWaveform, Command, Contact, GalleryVerticalEnd, ShoppingBasket, ShoppingCart } from 'lucide-react'
+import { AudioWaveform, Command, Contact, GalleryVerticalEnd, ShoppingBasket, ShoppingCart, Tag } from 'lucide-react'
 import { type SidebarData } from '../types'
 
 export const sidebarData: SidebarData = {
@@ -74,6 +74,11 @@ export const sidebarData: SidebarData = {
           title: 'Product',
           url: '/admin/products',
           icon: ShoppingBasket,
+        },
+        {
+          title: 'Categories',
+          url: '/admin/categories',
+          icon: Tag,
         },
          {
           title: 'Order',

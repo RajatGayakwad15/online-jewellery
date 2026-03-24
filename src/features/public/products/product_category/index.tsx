@@ -7,99 +7,23 @@ import Img1 from '@/assets/extra imges/product-front-image.webp'
 import { buttonVariants } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import Image from '@/components/image'
-import rings1 from '@/assets/extra imges/rings1.jpg'
-import rings2 from '@/assets/extra imges/rings2.webp'
-import necklace1 from '@/assets/extra imges/neklase.jpg'
-import necklace2 from '@/assets/extra imges/neklase2.jpg'
-import bracelets1 from '@/assets/extra imges/bracelets1.jpeg'
-import bracelets2 from '@/assets/extra imges/bracelets2.jpg'
-import earrings1 from '@/assets/extra imges/earrings1.jpg'
-import earrings2 from '@/assets/extra imges/earrings2.webp'
+import { apiClient } from '@/lib/apiClient'
 
-
-// ----------------- Dummy Jewelry Data -----------------
-const mockCategories = [
-  { id: 1, slug: 'rings', name: 'Rings' },
-  { id: 2, slug: 'necklace', name: 'Necklace' },
-  { id: 3, slug: 'bracelets', name: 'Bracelets' },
-  { id: 4, slug: 'earrings', name: 'Earrings' },
-]
-
-const mockProducts: Record<string, any[]> = {
-  rings: [
-    {
-      id: 1,
-      name: 'Diamond Ring',
-      title: '18K Gold Diamond Ring',
-      actual_price: 75000,
-      discount_price: 69999,
-      images: rings1,
-    },
-    {
-      id: 2,
-      name: 'Ruby Ring',
-      title: 'Ruby Studded Gold Ring',
-      actual_price: 55000,
-      discount_price: 49999,
-      images: rings2,
-    },
-  ],
-  necklace: [
-    {
-      id: 3,
-      name: 'Gold Necklace',
-      title: '22K Traditional Gold Necklace',
-      actual_price: 150000,
-      discount_price: 139999,
-      images: necklace1,
-    },
-    {
-      id: 4,
-      name: 'Pearl Necklace',
-      title: 'Elegant Pearl Necklace',
-      actual_price: 90000,
-      discount_price: 84999,
-      images: necklace2,
-    },
-  ],
-  bracelets: [
-    {
-      id: 5,
-      name: 'Diamond Bracelet',
-      title: 'Diamond Studded Bracelet',
-      actual_price: 120000,
-      discount_price: 115000,
-      images: bracelets1,
-    },
-    {
-      id: 6,
-      name: 'Gold Kada',
-      title: 'Heavy Gold Kada',
-      actual_price: 65000,
-      discount_price: 60000,
-      images: bracelets2,
-    },
-  ],
-  earrings: [
-    {
-      id: 7,
-      name: 'Stud Earrings',
-      title: 'Diamond Stud Earrings',
-      actual_price: 45000,
-      discount_price: 42000,
-      images: earrings1,
-    },
-    {
-      id: 8,
-      name: 'Jhumkas',
-      title: 'Traditional Gold Jhumkas',
-      actual_price: 70000,
-      discount_price: 65000,
-      images: earrings2,
-    },
-  ],
+type Category = {
+  id: string
+  slug: string
+  name: string
 }
-// --------------------------------------------------
+
+type Product = {
+  id: string
+  name: string
+  brand: string
+  actual_price: number
+  discount_price: number | null
+  images: string[]
+  title?: string
+}
 
 export default function ProductCategory() {
   const { category } = useParams({ strict: false }) as { category: string }
@@ -108,20 +32,68 @@ export default function ProductCategory() {
   const [maxVal, setMaxVal] = useState(0)
   const [highest, setHighest] = useState(0)
 
-  const productDetails =
-    mockProducts[category as keyof typeof mockProducts] || []
+  const [categories, setCategories] = useState<Category[]>([])
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (productDetails.length > 0 && maxVal === 0) {
-      const maxPrice = Math.max(...productDetails.map((p) => p.actual_price))
+    let isMounted = true
+    async function loadCategories() {
+      const res = await apiClient.get('/categories')
+      if (!isMounted) return
+      setCategories(res.data?.data ?? [])
+    }
+
+    loadCategories().catch(() => {
+      // Keep UI stable even if API fails.
+    })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  useEffect(() => {
+    let isMounted = true
+    async function loadProducts() {
+      setLoading(true)
+      setMinVal(0)
+      setMaxVal(0)
+      setHighest(0)
+
+      const res = await apiClient.get('/products', {
+        params: { categorySlug: category },
+      })
+      if (!isMounted) return
+      setProducts(res.data?.data ?? [])
+      setLoading(false)
+    }
+
+    if (category) {
+      loadProducts().catch(() => {
+        if (isMounted) setLoading(false)
+      })
+    }
+
+    return () => {
+      isMounted = false
+    }
+  }, [category])
+
+  useEffect(() => {
+    if (products.length > 0) {
+      const prices = products.map((p) => Number(p.actual_price || 0))
+      const maxPrice = Math.max(...prices)
       setMaxVal(maxPrice)
       setHighest(maxPrice)
     }
-  }, [productDetails, maxVal])
+  }, [products])
 
-  const filteredProducts = productDetails.filter(
-    (p) => p.actual_price >= minVal && p.actual_price <= maxVal
-  )
+  const filteredProducts = products.filter((p) => {
+    const price = Number(p.actual_price || 0)
+    if (maxVal === 0) return price >= minVal
+    return price >= minVal && price <= maxVal
+  })
 
   return (
     <div>
@@ -156,7 +128,7 @@ export default function ProductCategory() {
               maxVal={maxVal}
               setMinVal={setMinVal}
               setMaxVal={setMaxVal}
-              getProduct={mockCategories}
+              getProduct={categories}
               setModalOpen={setModalOpen}
             />
           </div>
@@ -176,14 +148,18 @@ export default function ProductCategory() {
             maxVal={maxVal}
             setMinVal={setMinVal}
             setMaxVal={setMaxVal}
-            getProduct={mockCategories}
+            getProduct={categories}
           />
         </div>
 
         {/* Products */}
         <div className='flex-1 overflow-auto'>
           <div className='container mx-auto flex flex-wrap justify-center gap-10 p-5'>
-            {filteredProducts.length > 0 ? (
+            {loading ? (
+              <div className='flex h-full items-center justify-center'>
+                <div className='font-semibold'>Loading products...</div>
+              </div>
+            ) : filteredProducts.length > 0 ? (
               filteredProducts.map((product) => (
                 <Link
                   key={product.id}
@@ -193,8 +169,8 @@ export default function ProductCategory() {
                   <Card className='bg-destructive-foreground w-64 rounded-2xl p-3 shadow-md transition'>
                     <div className='relative overflow-hidden rounded-xl'>
                       <Image
-                        src={product.images}
-                        alt={product.title}
+                        src={product.images?.[0]}
+                        alt={product.title ?? product.name}
                         className='h-48 w-full rounded-xl object-cover'
                       />
                     </div>

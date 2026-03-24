@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from '@tanstack/react-router'
 import {
   MapPinHouse,
   ShoppingCart,
@@ -24,103 +25,148 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Header } from '@/components/layout/header'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { apiClient } from '@/lib/apiClient'
+import { Skeleton } from '@/components/ui/skeleton'
 
-type Product = {
-  product_name: string;
-  product_image: string;
-  product_qua: number;
-  product_price: number;
-};
+type OrderItem = {
+  product_id: string
+  name: string
+  brand?: string
+  quantity: number
+  actual_price: number
+  discount_price: number | null
+  images?: string[]
+}
 
-type Order = {
-  id: number;
-  name: string;
-  phone_number: string;
-  email: string;
-  address: string;
-  city: string;
-  pincode: string;
-  invoice_no: string;
-  total_amount: number;
-  products: Product[];
-};
-
+type OrderDoc = {
+  id: string
+  user?: { username?: string }
+  shipping: {
+    name: string
+    pincode: string
+    address: string
+    addressType: string
+  }
+  paymentMethod: string
+  items: OrderItem[]
+  createdAt?: string
+}
 
 const ViewOrder = () => {
-  // Dummy order data
-  const [order, setOrder] = useState<Order | null>({
-    id: 1,
-    name: "Rahul Sharma",
-    phone_number: "9876543210",
-    email: "rahul@example.com",
-    address: "123 MG Road",
-    city: "Pune",
-    pincode: "411001",
-    invoice_no: "INV-2025-001",
-    total_amount: 8999,
-    products: [
-      {
-        product_name: "Stylish Glossary Book",
-        product_image:
-          "https://via.placeholder.com/100x100.png?text=Glossary",
-        product_qua: 2,
-        product_price: 2999,
-      },
-      {
-        product_name: "Glossary Tote Bag",
-        product_image:
-          "https://via.placeholder.com/100x100.png?text=Tote+Bag",
-        product_qua: 1,
-        product_price: 3001,
-      },
-    ],
-  });
+  const navigate = useNavigate()
+  const { id } = useParams({ strict: false }) as { id: string }
 
+  const [order, setOrder] = useState<OrderDoc | null>(null)
+  const [loading, setLoading] = useState(true)
   const [isDeleting, setIsDeleting] = useState(false)
 
-  const handleDelete = () => {
-    setIsDeleting(true)
-    setTimeout(() => {
+  useEffect(() => {
+    let mounted = true
+    async function load() {
+      if (!id) {
+        setLoading(false)
+        return
+      }
+      setLoading(true)
+      try {
+        const res = await apiClient.get(`/orders/${id}`)
+        if (!mounted) return
+        setOrder(res.data?.data ?? null)
+      } catch {
+        if (!mounted) return
+        setOrder(null)
+      } finally {
+        if (mounted) setLoading(false)
+      }
+    }
+    load().catch(() => {})
+    return () => {
+      mounted = false
+    }
+  }, [id])
+
+  const totalAmount =
+    order?.items?.reduce(
+      (s, i) =>
+        s + Number(i.discount_price ?? i.actual_price) * Number(i.quantity || 1),
+      0
+    ) ?? 0
+
+  const handleDelete = async () => {
+    if (!id) return
+    try {
+      setIsDeleting(true)
+      await apiClient.delete(`/orders/${id}`)
       toast.success('Order deleted successfully!', {
         style: { background: 'black', color: 'white', border: '1px solid #333' },
       })
-      setOrder(null) // remove order
+      navigate({ to: '/admin/order' })
+    } catch {
+      toast.error('Failed to delete order')
+    } finally {
       setIsDeleting(false)
-    }, 1500)
+    }
   }
 
   const handleCopy = () => {
-    if (order?.invoice_no) {
+    if (order?.id) {
       navigator.clipboard
-        .writeText(order.invoice_no)
+        .writeText(order.id)
         .then(() => toast.success('Copied to clipboard'))
         .catch(() => toast.error('Failed to copy'))
     }
   }
 
-  if (!order) {
+  if (loading) {
     return (
-      <div className="p-6 text-center text-lg font-semibold">
-        Order not found or deleted.
-      </div>
+      <>
+        <Header fixed>
+          <div className='ml-auto flex items-center space-x-4'>
+            <ThemeSwitch />
+            <ProfileDropdown />
+          </div>
+        </Header>
+        <div className='mt-20 space-y-4 p-4'>
+          <Skeleton className='h-10 w-full' />
+          <Skeleton className='h-40 w-full' />
+        </div>
+      </>
     )
   }
+
+  if (!order) {
+    return (
+      <>
+        <Header fixed>
+          <div className='ml-auto flex items-center space-x-4'>
+            <ThemeSwitch />
+            <ProfileDropdown />
+          </div>
+        </Header>
+        <div className='mt-20 p-6 text-center text-lg font-semibold'>
+          Order not found.
+        </div>
+      </>
+    )
+  }
+
+  const displayEmail = order.user?.username || '—'
+  const addressLine = `${order.shipping.address} (${order.shipping.addressType}) — ${order.shipping.pincode}`
 
   return (
     <>
       <Header fixed>
-        <div className="ml-auto flex items-center space-x-4">
+        <div className='ml-auto flex items-center space-x-4'>
           <ThemeSwitch />
           <ProfileDropdown />
         </div>
       </Header>
 
-      <div className="mt-20 space-y-6 p-4">
-        {/* Delete button */}
-        <div className="flex justify-end">
+      <div className='mt-20 space-y-6 p-4'>
+        <div className='flex justify-end'>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="outline">
+              <Button variant='outline'>
                 <Trash2 size={16} /> Delete
               </Button>
             </AlertDialogTrigger>
@@ -128,7 +174,7 @@ const ViewOrder = () => {
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete your
+                  This action cannot be undone. This will permanently delete this
                   order.
                 </AlertDialogDescription>
               </AlertDialogHeader>
@@ -137,13 +183,13 @@ const ViewOrder = () => {
                 <Button
                   onClick={handleDelete}
                   disabled={isDeleting}
-                  className="flex items-center gap-1"
+                  className='flex items-center gap-1'
                 >
                   <Trash2 size={16} />
                   {isDeleting ? (
                     <>
                       Deleting...
-                      <LoaderCircle className="animate-spin" size={16} />
+                      <LoaderCircle className='animate-spin' size={16} />
                     </>
                   ) : (
                     'Delete'
@@ -154,95 +200,109 @@ const ViewOrder = () => {
           </AlertDialog>
         </div>
 
-        {/* Client Info + Address */}
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[60%_39%]">
-          <Card className="border shadow-sm">
+        <div className='grid grid-cols-1 gap-4 lg:grid-cols-[60%_39%]'>
+          <Card className='border shadow-sm'>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                <User className="text-yellow-700" /> Client Information
+              <CardTitle className='flex items-center gap-2 text-lg font-bold'>
+                <User className='text-yellow-700' /> Client information
               </CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 gap-1 lg:grid-cols-2">
+            <CardContent className='grid grid-cols-1 gap-1 lg:grid-cols-2'>
               <div>
-                <span className="font-medium">Name:</span> {order.name}
+                <span className='font-medium'>Shipping name:</span>{' '}
+                {order.shipping.name}
               </div>
               <div>
-                <span className="font-medium">Phone:</span>{' '}
-                {order.phone_number}
+                <span className='font-medium'>Account / email:</span>{' '}
+                {displayEmail}
               </div>
               <div>
-                <span className="font-medium">Email:</span> {order.email}
+                <span className='font-medium'>Payment:</span>{' '}
+                <span className='uppercase'>{order.paymentMethod}</span>
               </div>
+              {order.createdAt && (
+                <div>
+                  <span className='font-medium'>Placed:</span>{' '}
+                  {new Date(order.createdAt).toLocaleString()}
+                </div>
+              )}
             </CardContent>
           </Card>
 
-          <Card className="border shadow-sm">
+          <Card className='border shadow-sm'>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                <MapPinHouse className="text-yellow-700" /> Address Information
+              <CardTitle className='flex items-center gap-2 text-lg font-bold'>
+                <MapPinHouse className='text-yellow-700' /> Address
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p>
-                {order.address}, {order.city} - {order.pincode}
-              </p>
+              <p>{addressLine}</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Invoice + Products */}
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[39%_60%]">
-          <Card className="border shadow-sm">
-            <CardContent className="space-y-4">
+        <div className='grid grid-cols-1 gap-4 lg:grid-cols-[39%_60%]'>
+          <Card className='border shadow-sm'>
+            <CardContent className='space-y-4'>
               <div
-                className="mt-4 flex cursor-pointer items-center gap-2"
+                className='mt-4 flex cursor-pointer items-center gap-2'
                 onClick={handleCopy}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') handleCopy()
+                }}
+                role='button'
+                tabIndex={0}
               >
-                <FileText /> <span>Invoice No:</span>
-                <span className="font-semibold">{order.invoice_no}</span>
+                <FileText /> <span>Order ID:</span>
+                <span className='font-semibold'>{order.id}</span>
               </div>
-              <Button variant="outline">
-                <FileText className="mr-2" /> Download Invoice
-              </Button>
             </CardContent>
           </Card>
 
-          <Card className="border shadow-sm">
+          <Card className='border shadow-sm'>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                <ShoppingCart className="text-yellow-700" /> Order Items
+              <CardTitle className='flex items-center gap-2 text-lg font-bold'>
+                <ShoppingCart className='text-yellow-700' /> Order items
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <table className="w-full table-auto text-sm">
+              <table className='w-full table-auto text-sm'>
                 <thead>
                   <tr>
-                    <th className="p-2 text-left">Product</th>
-                    <th className="p-2 text-center">Qty</th>
-                    <th className="p-2 text-right">Price</th>
+                    <th className='p-2 text-left'>Product</th>
+                    <th className='p-2 text-center'>Qty</th>
+                    <th className='p-2 text-right'>Price</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {order.products.map((item, i) => (
-                    <tr key={i} className="border-b border-gray-700">
-                      <td className="flex items-center gap-2 p-2">
-                        <img
-                          src={item.product_image}
-                          alt={item.product_name}
-                          className="h-10 w-10 rounded-full object-contain"
-                        />
-                        {item.product_name}
-                      </td>
-                      <td className="p-2 text-center">{item.product_qua}</td>
-                      <td className="p-2 text-right">
-                        ₹{item.product_price}
-                      </td>
-                    </tr>
-                  ))}
+                  {(order.items || []).map((item, i) => {
+                    const img = item.images?.[0] || ''
+                    const unit = Number(item.discount_price ?? item.actual_price)
+                    return (
+                      <tr key={`${item.product_id}-${i}`} className='border-b border-gray-700'>
+                        <td className='flex items-center gap-2 p-2'>
+                          {img ? (
+                            <img
+                              src={img}
+                              alt={item.name}
+                              className='h-10 w-10 rounded-full object-cover'
+                            />
+                          ) : (
+                            <span className='flex h-10 w-10 items-center justify-center rounded-full bg-muted text-xs'>
+                              —
+                            </span>
+                          )}
+                          {item.name}
+                        </td>
+                        <td className='p-2 text-center'>{item.quantity}</td>
+                        <td className='p-2 text-right'>₹{unit}</td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
-              <div className="mt-4 text-right font-semibold">
-                Total Amount: ₹{Number(order.total_amount).toFixed(2)}
+              <div className='mt-4 text-right font-semibold'>
+                Total: ₹{totalAmount.toFixed(2)}
               </div>
             </CardContent>
           </Card>

@@ -1,4 +1,5 @@
 // pages/UsersPage.tsx
+import { useEffect, useState } from 'react'
 import { ColumnDef } from '@tanstack/react-table'
 import { DataTable } from './DataTable.tsx'
 // import { Checkbox } from '@/components/ui/checkbox'
@@ -17,70 +18,66 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog.tsx'
 import { useNavigate } from '@tanstack/react-router'
+import toast from 'react-hot-toast'
+import { apiClient } from '@/lib/apiClient'
 
-// Define User type
-export interface User {
-  id: number
-  produactname: string
-  actualprice: number
-  disprice: number
-  email: string
-  phoneNumber: string
-  status: 'active' | 'inactive'
-  role: 'admin' | 'user'
+type ProductRow = {
+  id: string
+  name: string
+  brand: string
+  actual_price: number
+  discount_price: number | null
 }
-
-// Sample data
-const data: User[] = [
-  {
-    id: 1,
-    produactname: 'Rings',
-    actualprice: 5000,
-    disprice: 4000,
-    email: 'rajat@example.com',
-    phoneNumber: '9999999999',
-    status: 'active',
-    role: 'admin',
-  },
-  {
-    id: 2,
-    produactname: 'Necklase',
-    actualprice: 6000,
-    disprice: 4000,
-    email: 'john@example.com',
-    phoneNumber: '8888888888',
-    status: 'inactive',
-    role: 'user',
-  },
-]
 
 export default function ProductPage() {
   const navigate = useNavigate() // ✅ moved inside component
 
+  const [products, setProducts] = useState<ProductRow[]>([])
+  const [loading, setLoading] = useState(true)
+
+  async function fetchProducts() {
+    setLoading(true)
+    const res = await apiClient.get('/products')
+    setProducts(res.data?.data ?? [])
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    fetchProducts().catch(() => setLoading(false))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  async function handleDeleteProduct(productId: string) {
+    await apiClient.delete(`/products/${productId}`)
+    toast.success('Product deleted')
+    await fetchProducts()
+  }
+
   // Define columns inside the component so they can access navigate
-  const columns: ColumnDef<User>[] = [
+  const columns: ColumnDef<ProductRow>[] = [
     {
       id: 'id',
       header: 'ID',
       cell: ({ row }) => <span>{row.index + 1}</span>, // row.index starts at 0, so +1
     },
     {
-      id: 'produactname',
+      accessorKey: 'name',
       header: 'Product Name',
-      cell: ({ row }) => {
-        const { produactname } = row.original
-        return <span>{`${produactname}`}</span>
-      },
+      cell: ({ row }) => <span>{row.getValue('name')}</span>,
     },
     {
-      accessorKey: 'actualprice',
+      accessorKey: 'actual_price',
       header: 'Actual Price',
-      cell: ({ row }) => <span>{row.getValue('actualprice')}</span>,
+      cell: ({ row }) => <span>{row.getValue('actual_price')}</span>,
     },
     {
-      accessorKey: 'disprice',
+      accessorKey: 'discount_price',
       header: 'Discount Price',
-      cell: ({ row }) => <span>{row.getValue('disprice')}</span>,
+      cell: ({ row }) => (
+        <span>
+          {row.original.discount_price ?? row.original.actual_price}
+        </span>
+      ),
     },
     {
       id: 'actions',
@@ -116,10 +113,10 @@ export default function ProductPage() {
               <AlertDialogContent onClick={(e) => e.stopPropagation()}>
                 <AlertDialogHeader>
                   <h2 className="text-lg font-semibold text-red-500">
-                    Delete User
+                    Delete Product
                   </h2>
                   <p>
-                    Are you sure you want to delete this user? This action
+                    Are you sure you want to delete this product? This action
                     cannot be reverted.
                   </p>
                 </AlertDialogHeader>
@@ -133,7 +130,7 @@ export default function ProductPage() {
                   <AlertDialogAction
                     onClick={(e) => {
                       e.stopPropagation()
-                      // handleDeleteProduct(row.original.id);
+                      handleDeleteProduct(String(row.original.id)).catch(() => {})
                     }}
                     className="cursor-pointer"
                   >
@@ -151,5 +148,5 @@ export default function ProductPage() {
     },
   ]
 
-  return <DataTable columns={columns} data={data || []} />
+  return <DataTable columns={columns} data={loading ? [] : products} />
 }

@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 // import { IconBrandFacebook, IconBrandGithub } from '@tabler/icons-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
 import {
   Form,
   FormControl,
@@ -15,6 +16,8 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
+import { apiClient } from '@/lib/apiClient'
+import { useNavigate } from '@tanstack/react-router'
 
 type SignUpFormProps = HTMLAttributes<HTMLFormElement>
 
@@ -47,6 +50,7 @@ const formSchema = z
 
 export function SignUpForm({ className, ...props }: SignUpFormProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -59,14 +63,24 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
     },
   })
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
-    // eslint-disable-next-line no-console
-    console.log(data)
+    try {
+      await apiClient.post('/auth/register', {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        password: data.password,
+      })
 
-    setTimeout(() => {
+      toast.success('Account created successfully!')
+      navigate({ to: '/sign-in' })
+    } catch (err: any) {
+      const msg = err?.response?.data?.title ?? 'Failed to create account.'
+      toast.error(String(msg))
+    } finally {
       setIsLoading(false)
-    }, 3000)
+    }
   }
 
   return (

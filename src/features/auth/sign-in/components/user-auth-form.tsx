@@ -6,6 +6,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 // import { IconBrandFacebook, IconBrandGithub } from '@tabler/icons-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
+import { apiClient } from '@/lib/apiClient'
+import { useAuthStore } from '@/stores/authStore'
 import {
   Form,
   FormControl,
@@ -16,11 +19,15 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
+import { useNavigate } from '@tanstack/react-router'
 
 type UserAuthFormProps = HTMLAttributes<HTMLFormElement>
 
 const formSchema = z.object({
-  username: z.string().min(1, { message: 'Please enter your username' }),
+  email: z
+    .string()
+    .min(1, { message: 'Please enter your email' })
+    .email({ message: 'Invalid email address' }),
   password: z
     .string()
     .min(1, {
@@ -33,23 +40,50 @@ const formSchema = z.object({
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: '',
+      email: '',
       password: '',
     },
   })
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
-    // eslint-disable-next-line no-console
-    console.log(data)
+    try {
+      const res = await apiClient.post('/auth/login', {
+        email: data.email,
+        password: data.password,
+      })
 
-    setTimeout(() => {
+      const token = res.data?.token
+      if (!token) {
+        toast.error('Login failed. Please try again.')
+        return
+      }
+
+      useAuthStore.getState().auth.setAccessToken(token)
+      toast.success('Login successful!')
+      let role: string | undefined
+      try {
+        const me = await apiClient.get('/auth/me', {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        role = me.data?.data?.role
+      } catch {
+        // If /auth/me fails, keep going based on the token we just received.
+        // Admin routes will still be protected by /admin guard.
+      }
+
+      navigate({ to: role === 'admin' ? '/admin' : '/' })
+    } catch (err: any) {
+      const msg = err?.response?.data?.title ?? 'Login failed. Please try again.'
+      toast.error(String(msg))
+    } finally {
       setIsLoading(false)
-    }, 3000)
+    }
   }
 
   return (
@@ -61,12 +95,12 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       >
         <FormField
           control={form.control}
-          name='username'
+          name='email'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder='username' {...field} />
+                <Input placeholder='you@example.com' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

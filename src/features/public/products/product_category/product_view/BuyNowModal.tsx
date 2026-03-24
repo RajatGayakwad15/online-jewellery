@@ -4,11 +4,13 @@ import { useNavigate, useParams } from '@tanstack/react-router'
 import { Formik, Form, Field } from 'formik'
 // import { jwtDecode } from 'jwt-decode'
 import { EyeIcon } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 import * as Yup from 'yup'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { apiClient } from '@/lib/apiClient'
+import { useAuthStore } from '@/stores/authStore'
 
 interface BuyNowProps {
   product?: {
@@ -33,9 +35,10 @@ const BuyNow: React.FC<BuyNowProps> = ({ isCart }) => {
 const quantity = 1
 
   const navigate = useNavigate()
+  const token = useAuthStore((s) => s.auth.accessToken)
 //   const authTokenChk = Cookies.get('authToken')
 //   const [step, setStep] = useState(authTokenChk ? 2 : 1)
-const [step, setStep] = useState(1)
+const [step, setStep] = useState(token ? 2 : 1)
 
 
   const { category, id } = useParams({ strict: false })
@@ -50,52 +53,58 @@ const [step, setStep] = useState(1)
 //     name = decodedToken?.username
 //   }
 
-  // ---------------- MOCK DATA INSTEAD OF API ----------------
-  const dummyProduct = {
-    id: 1,
-    name: 'Premium Office Chair',
-    brand: 'FurniCo',
-    category: 'Furniture',
-    actual_price: '5000',
-    discount_price: '3500',
-    images: [
-      'https://via.placeholder.com/300x300.png?text=Product+Image',
-    ],
-  }
-
-  const dummyCart = {
-    data: {
-      cartData: [
-        {
-          product_id: 1,
-          name: 'Premium Office Chair',
-          brand: 'FurniCo',
-          actual_price: '5000',
-          discount_price: '3500',
-          images: [
-            'https://via.placeholder.com/300x300.png?text=Cart+Product',
-          ],
-        },
-      ],
-    },
-  }
-
-  const productDetails = { data: dummyProduct }
-  const getCart = isCart ? dummyCart : null
-  // -----------------------------------------------------------
+  const [productDetails, setProductDetails] = useState<any | null>(null)
 
   const [cartItems, setCartItems] = useState<any[]>([])
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({})
 
   useEffect(() => {
-    if (getCart?.data?.cartData) {
-      setCartItems(getCart.data.cartData)
-    } else if (productDetails?.data) {
+    if (!id) return
+    apiClient
+      .get(`/products/${id}`)
+      .then((res) => setProductDetails(res.data?.data ?? null))
+      .catch(() => setProductDetails(null))
+  }, [id])
+
+  // If user is already logged in, skip step 1 and load user name from JWT.
+  useEffect(() => {
+    if (!token) {
+      setStep(1)
+      return
+    }
+
+    let isMounted = true
+    apiClient
+      .get('/auth/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        if (!isMounted) return
+        const me = res.data?.data
+        const name = me?.name || me?.email || ''
+        setUsername(String(name))
+        setStep(2)
+      })
+      .catch(() => {
+        if (!isMounted) return
+        setStep(1)
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [token])
+
+  useEffect(() => {
+    if (productDetails) {
       setCartItems([
-        { ...productDetails.data, product_id: productDetails.data.id },
+        {
+          ...productDetails,
+          product_id: productDetails.id,
+        },
       ])
     }
-  }, [getCart, productDetails])
+  }, [productDetails])
 
   useEffect(() => {
     if (cartItems && cartItems.length > 0) {
@@ -107,7 +116,7 @@ const [step, setStep] = useState(1)
     }
   }, [cartItems])
 
-  const handleQuantityChange = (id: number, change: number) => {
+  const handleQuantityChange = (id: string, change: number) => {
     setQuantities((prev) => ({
       ...prev,
       [id]: Math.max(1, (prev[id] || 1) + change),
@@ -118,7 +127,7 @@ const [step, setStep] = useState(1)
     ? cartItems.reduce(
         (sum, item) =>
           sum +
-          parseInt(item.actual_price) * (quantities[item.product_id] || 1),
+          Number(item.actual_price) * (quantities[item.product_id] || 1),
         0
       )
     : 0
@@ -127,7 +136,7 @@ const [step, setStep] = useState(1)
     ? cartItems.reduce(
         (sum, item) =>
           sum +
-          parseInt(item.discount_price || item.actual_price) *
+          Number(item.discount_price ?? item.actual_price) *
             (quantities[item.product_id] || 1),
         0
       )
@@ -136,21 +145,49 @@ const [step, setStep] = useState(1)
   const totalSavings = totalActual - totalDiscount
 
   const handleRegisterClick = () => {
-    // Dummy login
-    // if (username === 'test' && password === '1234') {
-    //   const token = 'dummy.jwt.token'
-    //   Cookies.set('authToken', token, { expires: 7 })
-    //   toast.success('Login Successfully')
-      setStep(2)
-    // } else {
-    //   toast.error('Invalid credentials')
-    // }
+    if (!token) {
+      navigate({ to: '/sign-in' })
+      return
+    }
+    setStep(2)
   }
 
-  const handlePlaceOrder = (values: any) => {
-    console.log('Order Placed:', { ...values, cartItems, quantities })
-    toast.success('🎉 Order placed successfully!')
-    navigate({ to: '/' })
+  const handlePlaceOrder = async (values: any) => {
+    if (!token) {
+      navigate({ to: '/sign-in' })
+      return
+    }
+
+    const payload = {
+      user: { username },
+      shipping: {
+        name: values.name,
+        pincode: values.pincode,
+        address: values.address,
+        addressType: values.addressType,
+      },
+      paymentMethod: values.paymentMethod,
+      items: cartItems.map((item: any) => ({
+        product_id: String(item.product_id),
+        name: item.name,
+        brand: item.brand,
+        quantity: quantities[item.product_id] || 1,
+        actual_price: Number(item.actual_price),
+        discount_price:
+          item.discount_price === null || item.discount_price === undefined
+            ? null
+            : Number(item.discount_price),
+        images: Array.isArray(item.images) ? item.images : [],
+      })),
+    }
+
+    try {
+      await apiClient.post('/orders', payload)
+      toast.success('🎉 Order placed successfully!')
+      navigate({ to: '/' })
+    } catch {
+      toast.error('Failed to place order. Please try again.')
+    }
   }
 
   return (
@@ -184,8 +221,7 @@ const [step, setStep] = useState(1)
                       1
                     </span>
                     <h2 className='text-lg font-semibold'>
-                      {/* {authTokenChk ? `Hello ${name}` : 'LOGIN OR SIGNUP'} */}
-                      "Hello"
+                      Login / Signup
                     </h2>
                   </div>
                   {step === 1 && (
@@ -241,6 +277,11 @@ const [step, setStep] = useState(1)
                       2
                     </span>
                     <h2 className='text-lg font-semibold'>DELIVERY ADDRESS</h2>
+                    {username ? (
+                      <p className='text-sm font-medium text-muted-foreground ml-auto'>
+                        Hi, {username}
+                      </p>
+                    ) : null}
                   </div>
                   {step === 2 && (
                     <div className='space-y-4 p-4'>

@@ -1,201 +1,151 @@
-// pages/UsersPage.tsx
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ColumnDef } from '@tanstack/react-table'
-import { DataTable } from './DataTable.tsx'
-// import { Checkbox } from '@/components/ui/checkbox'
-// import { Badge } from '@/components/ui/badge'
-// import { cn } from '@/lib/utils'
-// import { DataTableRowActions } from './DataTableRowActions.tsx'
-import { Button } from '@/components/ui/button.tsx'
-import {  Trash } from 'lucide-react'
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTrigger } from '@/components/ui/alert-dialog.tsx'
+import { useNavigate } from '@tanstack/react-router'
+import { toast } from 'sonner'
+import { Trash } from 'lucide-react'
 
-// Define User type
-export interface User {
-  id: number
-  username: string
-  firstName: string
-  lastName: string
+import { DataTable } from './DataTable.tsx'
+import { apiClient } from '@/lib/apiClient'
+import { Button } from '@/components/ui/button.tsx'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog.tsx'
+
+type ContactRow = {
+  id: string
+  name: string
   email: string
-  phoneNumber: string
-  status: 'active' | 'inactive'
-  role: 'admin' | 'user'
+  phone: string
+  subject: string
+  message: string
 }
 
-// Define columns
-const columns: ColumnDef<User>[] = [
-//   {
-//     id: 'select',
-//     header: ({ table }) => (
-//       <Checkbox
-//         checked={
-//           table.getIsAllPageRowsSelected() ||
-//           (table.getIsSomePageRowsSelected() && 'indeterminate')
-//         }
-//         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-//       />
-//     ),
-//     cell: ({ row }) => (
-//       <Checkbox
-//         checked={row.getIsSelected()}
-//         onCheckedChange={(value) => row.toggleSelected(!!value)}
-//       />
-//     ),
-//     enableSorting: false,
-//     enableHiding: false,
-//     meta: { className: cn('sticky left-0 bg-background z-10') },
-//   },
-{
-  id: 'id',
-  header: 'ID',
-  cell: ({ row }) => <span>{row.index + 1}</span>, // row.index starts at 0, so +1
-},
-//   {
-//     accessorKey: 'username',
-//     header: 'Username',
-//     cell: ({ row }) => <span>{row.getValue('username')}</span>,
-//   },
-  {
-    id: 'fullName',
-    header: 'Name',
-    cell: ({ row }) => {
-      const { firstName, lastName } = row.original
-      return <span>{`${firstName} ${lastName}`}</span>
-    },
-  },
-  {
-    accessorKey: 'email',
-    header: 'Email',
-    cell: ({ row }) => <span>{row.getValue('email')}</span>,
-  },
-  {
-    accessorKey: 'phoneNumber',
-    header: 'Phone Number',
-    cell: ({ row }) => <span>{row.getValue('phoneNumber')}</span>,
-  },
-//   {
-//     accessorKey: 'status',
-//     header: 'Status',
-//     cell: ({ row }) => (
-//       <Badge
-//         variant="outline"
-//         className={cn(
-//           'capitalize',
-//           row.getValue('status') === 'active'
-//             ? 'text-green-600 border-green-600'
-//             : 'text-red-600 border-red-600'
-//         )}
-//       >
-//         {row.getValue('status')}
-//       </Badge>
-//     ),
-//   },
-//   {
-//     accessorKey: 'role',
-//     header: 'Role',
-//     cell: ({ row }) => <span className="capitalize">{row.getValue('role')}</span>,
-//   },
-//     {
-//     id: 'actions',
-//     cell: DataTableRowActions,
-//   },
- {
-      id: "actions",
-    //   header: "Actions",
-      cell: () => (
-        <div className="flex space-x-2 justify-center">
-          {/* <div className="relative group">
-            <Button
-              variant="ghost"
-              className="h-8 w-8 p-0 cursor-pointer"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleEditClick(row.original.id);
-              }}
-            >
-              <Edit size={16} />
-            </Button>
-            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mt-2 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded-md">
-              Edit
-            </span>
-          </div> */}
+export default function ContactPage() {
+  const navigate = useNavigate()
+  const [contacts, setContacts] = useState<ContactRow[]>([])
+  const [loading, setLoading] = useState(true)
 
-          <div className="relative group">
+  async function fetchContacts() {
+    setLoading(true)
+    try {
+      const res = await apiClient.get('/contacts')
+      setContacts(res.data?.data ?? [])
+    } catch {
+      setContacts([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchContacts().catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const columns: ColumnDef<ContactRow>[] = useMemo(() => {
+    return [
+      {
+        id: 'id',
+        header: 'ID',
+        cell: ({ row }) => <span>{row.index + 1}</span>,
+      },
+      {
+        accessorKey: 'name',
+        header: 'Name',
+        cell: ({ row }) => <span>{row.getValue('name')}</span>,
+      },
+      {
+        accessorKey: 'email',
+        header: 'Email',
+        cell: ({ row }) => <span>{row.getValue('email')}</span>,
+      },
+      {
+        accessorKey: 'phone',
+        header: 'Phone',
+        cell: ({ row }) => <span>{row.getValue('phone')}</span>,
+      },
+      {
+        accessorKey: 'subject',
+        header: 'Subject',
+        cell: ({ row }) => <span>{row.getValue('subject')}</span>,
+      },
+      {
+        id: 'actions',
+        cell: ({ row }) => (
+          <div className='flex space-x-2 justify-center'>
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button
                   onClick={(e) => e.stopPropagation()}
-                  variant="ghost"
-                  className="h-8 w-8 p-0 cursor-pointer"
+                  variant='ghost'
+                  className='h-8 w-8 p-0 cursor-pointer'
                 >
                   <Trash size={16} />
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent onClick={(e) => e.stopPropagation()}>
                 <AlertDialogHeader>
-                  <h2 className="text-lg font-semibold text-red-500">
+                  <h2 className='text-lg font-semibold text-red-500'>
                     Delete Contact
                   </h2>
-                  <p>
-                    Are you sure you want to delete this contact? This action
-                    cannot be reverted.
-                  </p>
+                  <p>Are you sure you want to delete this contact?</p>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel
                     onClick={(e) => {
-                      e.stopPropagation();
+                      e.stopPropagation()
                     }}
-                    className="cursor-pointer"
+                    className='cursor-pointer'
                   >
                     Cancel
                   </AlertDialogCancel>
                   <AlertDialogAction
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    //   handleDeleteProduct(row.original.id);
+                    onClick={async (e) => {
+                      e.stopPropagation()
+                      try {
+                        await apiClient.delete(`/contacts/${row.original.id}`)
+                        toast.success('Contact deleted')
+                        await fetchContacts()
+                      } catch {
+                        toast.error('Failed to delete contact')
+                      }
                     }}
-                    className="cursor-pointer"
+                    className='cursor-pointer'
                   >
                     Delete
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mt-2 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded-md">
-              Delete
-            </span>
           </div>
-        </div>
-      ),
-    //   enableSorting: false,
-    //   meta: { headClassName: "justify-center" },
+        ),
+      },
+    ]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const onRowClick = useCallback(
+    (row: ContactRow) => {
+      navigate({
+        to: '/admin/contact/$id',
+        params: { id: row.id },
+      })
     },
-]
+    [navigate]
+  )
 
-// Sample data
-const data: User[] = [
-  {
-    id: 1,
-    username: 'omkar',
-    firstName: 'Omkar',
-    lastName: 'Gayakwad',
-    email: 'omkar@example.com',
-    phoneNumber: '9999999999',
-    status: 'active',
-    role: 'admin',
-  },
-  {
-    id: 2,
-    username: 'john',
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john@example.com',
-    phoneNumber: '8888888888',
-    status: 'inactive',
-    role: 'user',
-  },
-]
-
-export default function ContactPage() {
-  return <DataTable columns={columns} data={data || []} />
+  return (
+    <DataTable
+      columns={columns}
+      data={loading ? [] : contacts}
+      onRowClick={onRowClick}
+    />
+  )
 }
+

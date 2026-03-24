@@ -30,9 +30,9 @@
 
 // export default AddProduct
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 // import { useMutation, useQuery } from '@tanstack/react-query'
-// import { useNavigate } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import {
   Formik,
   FieldArray,
@@ -54,6 +54,8 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 // import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 // import { addproduct } from '../../../../api/admin/products.jsx'
+import { apiClient } from '@/lib/apiClient'
+import { isAxiosError } from 'axios'
 
 // const furnitureCategories = [
 //   { id: 1, slug: 'sofas', name: 'Sofas' },
@@ -239,7 +241,22 @@ const AddProduct = () => {
   const [activeTab, setActiveTab] = useState('General')
   const currentIndex = tabs.indexOf(activeTab)
   const isLastTab = currentIndex === tabs.length - 1
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
+
+  type Category = {
+    id: string
+    slug: string
+    name: string
+  }
+
+  const [categories, setCategories] = useState<Category[]>([])
+
+  useEffect(() => {
+    apiClient
+      .get('/categories')
+      .then((res) => setCategories(res.data?.data ?? []))
+      .catch(() => setCategories([]))
+  }, [])
 
   // const { mutate: product, isPending } = useMutation({
   //   mutationKey: ['add-product'],
@@ -359,11 +376,11 @@ const AddProduct = () => {
                 className='w-full rounded border p-2'
               >
                 <option value='' className='bg-accent'>-- Choose Category --</option>
-                {/* {getProduct?.data?.Category.map((cat) => (
-                  <option key={cat.slug} value={cat.id} className='bg-accent'>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.slug} className='bg-accent'>
                     {cat.name}
                   </option>
-                ))} */}
+                ))}
               </Field>
             </div>
             <div className='col-span-2'>
@@ -405,9 +422,45 @@ const AddProduct = () => {
             <Formik
               initialValues={initialValues}
               validationSchema={validationSchema}
-              onSubmit={(values) => {
-                console.log(values)
-                // if (isLastTab) product(values)
+              onSubmit={async (values) => {
+                try {
+                  const formData = new FormData()
+
+                  ;(values.images || []).forEach((file) => {
+                    formData.append('images', file)
+                  })
+
+                  formData.append('categorySlug', values.categorySlug)
+                  formData.append('name', values.name)
+                  formData.append('brand', values.brand)
+                  formData.append('actualPrice', String(values.actualPrice))
+                  formData.append(
+                    'discountPrice',
+                    values.discountPrice === '' ? '' : String(values.discountPrice)
+                  )
+                  formData.append('information', values.information || '')
+
+                  formData.append('commonFields', JSON.stringify(values.commonFields))
+                  formData.append(
+                    'productDetails',
+                    JSON.stringify(values.productDetails)
+                  )
+                  formData.append('dimensions', JSON.stringify(values.dimensions))
+                  formData.append('warranty', JSON.stringify(values.warranty))
+
+                  await apiClient.post('/products', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                  })
+
+                  toast.success('Product added successfully!')
+                  navigate({ to: '/admin/products' })
+                } catch (err) {
+                  const msg =
+                    isAxiosError(err) && err.response?.data?.title
+                      ? String(err.response.data.title)
+                      : 'Failed to add product. Please try again.'
+                  toast.error(msg)
+                }
               }}
             >
               {({ values, validateForm, errors, touched }) => (
